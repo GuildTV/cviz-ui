@@ -1,10 +1,12 @@
-# Guild Elections Graphics WebUI
+# C-Viz Generic WebUI
 
-## Installation
+## Usage
 ### Configuration
 
 You can change various elements of the website from the config.js file.
 
-```javascript
-export const webui_port = 8080;
-```
+### Running
+
+Ensure you have a rethinkdb instance running, with configuration specified in config.js
+
+Start the server with ```npm run start```

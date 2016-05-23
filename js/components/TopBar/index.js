@@ -48,7 +48,7 @@ export default class TopBar extends React.Component {
         <Socket.Event name="test" ref="sock"/>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#">Guild Elections WebUI</a>
+            <a href="#">C-Viz WebUI</a>
           </Navbar.Brand>
           <Navbar.Toggle />
         </Navbar.Header>
