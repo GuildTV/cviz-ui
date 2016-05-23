@@ -29,8 +29,8 @@ export default class SceneEntry extends React.Component {
 
     this.props.refs.sock.socket.emit(RunTemplateKey, {
       template: this.props.data.template,
-      data: { candidate: this.props.data },
-      dataId: this.props.data.uid
+      data: this.props.data,
+      dataId: this.props.data.name
     });
   }
 

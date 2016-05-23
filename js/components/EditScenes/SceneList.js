@@ -32,14 +32,13 @@ export default class SceneList extends React.Component {
 
     let scenes = this.state.scenes;
     newData.map(scene => {
-      var index = scenes.findIndex(s => s.uid == scene.uid);
+      var index = scenes.findIndex(s => s.id == scene.id);
       if(index >= 0)
         scenes[index] = scene;
       else  
         scenes.push(scene);
     });
 
-    console.log(scenes)
     this.setState({scenes});
   }
 
@@ -49,10 +48,8 @@ export default class SceneList extends React.Component {
 
   render() {
     let rows = this.state.scenes.map((scene) => {
-      console.log(scene);
-
       return (
-        <tr key={ scene.id }>
+        <tr key={ JSON.stringify(scene) }>
           <td>{ scene.name }</td>
           <td>{ scene.template }</td>
           <td>{ scene.order }</td>
