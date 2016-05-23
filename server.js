@@ -4,10 +4,9 @@ const bodyParser = require('body-parser');
 
 import { webui_port } from "./config"
 
-import positionController from './controllers/position';
-import peopleController from './controllers/person';
+import sceneController from './controllers/scene';
 import templateController from './controllers/template';
-import { setup as graphSetup, bind as graphBind } from './controllers/graphs';
+// import { setup as graphSetup, bind as graphBind } from './controllers/graphs';
 
 import Models from "./models"
 const { Person, Position } = Models;
@@ -24,7 +23,7 @@ const io = require('socket.io')(server);
 app.use(bodyParser.urlencoded({ extended: false } ));
 app.use(express.static('static'));
 
-graphSetup(Models);
+// graphSetup(Models);
 
 // Set socket.io listeners.
 io.sockets.on('connection', (socket) => {
@@ -34,11 +33,10 @@ io.sockets.on('connection', (socket) => {
     console.log('user disconnected');
   });
 
-  positionController(Models, socket);
-  peopleController(Models, socket);
+  sceneController(Models, socket);
 
   templateController(Models, socket)
-  graphBind(Models, socket);
+  // graphBind(Models, socket);
 });
 
 // Set Express routes.

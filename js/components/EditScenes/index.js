@@ -9,8 +9,8 @@ import { Grid, Row, Col } from 'react-bootstrap';
 /*
 * Internal Dependancies
 */
-import PositionList from './PositionList'
-import Position from './Position'
+import SceneList from './SceneList'
+import Scene from './Scene'
 
 /*
 * Variables
@@ -19,7 +19,7 @@ import Position from './Position'
 /*
 * React
 */
-export default class EditPositions extends React.Component {
+export default class EditScenes extends React.Component {
   LoadData(e){
     var data = e.target.getAttribute('data');
     data = JSON.parse(data);
@@ -35,8 +35,8 @@ export default class EditPositions extends React.Component {
         <Grid>
           <Row>
             <Col xs={12}>
-              <PositionList onEdit={this.LoadData.bind(this)} ref="list" />
-              <Position ref="edit" />
+              <SceneList onEdit={this.LoadData.bind(this)} ref="list" />
+              <Scene ref="edit" />
             </Col>
           </Row>
         </Grid>

@@ -56,8 +56,7 @@ export default class TopBar extends React.Component {
           <Nav pullRight>
             <NavDropdown eventKey={1} title="Edit" id="basic-nav-dropdown">
               <MenuItem eventKey={1.1} href="#">Dashboard</MenuItem>
-              <MenuItem eventKey={1.2} href="#/people">People</MenuItem>
-              <MenuItem eventKey={1.3} href="#/positions">Positions</MenuItem>
+              <MenuItem eventKey={1.2} href="#/scenes">Scenes</MenuItem>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

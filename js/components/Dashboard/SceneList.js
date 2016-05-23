@@ -10,22 +10,22 @@ import {
 } from 'react-bootstrap';
 import Socket from 'react-socket';
 
-import PersonEntry from './PersonEntry';
+import SceneEntry from './SceneEntry';
 
 /*
 * Variables
 */
-const GetPeopleKey = "getPeople";
-const UpdatePeopleKey = "updatePeople";
+const GetScenesKey = "getScenes";
+const UpdateSceneKey = "updateScene";
 
 /*
 * React
 */
-export default class PeopleList extends React.Component {
+export default class SceneList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      people: [],
+      scenes: [],
       filter: ""
     }
   }
@@ -35,23 +35,23 @@ export default class PeopleList extends React.Component {
   }
 
   updateData(){
-    this.refs.sock.socket.emit(GetPeopleKey);
+    this.refs.sock.socket.emit(GetScenesKey);
   }
 
   handleStateChange(newData) {
-    console.log("PEOPLE", newData);
+    console.log("SCENES", newData);
 
-    let people = this.state.people;
-    newData.map(person => {
-      var index = people.findIndex(p => p.uid == person.uid);
+    let scenes = this.state.scenes;
+    newData.map(scene => {
+      var index = scenes.findIndex(p => p.uid == scene.uid);
       if(index >= 0)
-        people[index] = person;
+        scenes[index] = scene;
       else  
-        people.push(person);
+        scenes.push(scene);
     });
 
-    console.log(people)
-    this.setState({people});
+    console.log(scenes)
+    this.setState({scenes});
   }
 
   filterNames(e){
@@ -59,22 +59,22 @@ export default class PeopleList extends React.Component {
     this.setState({ filter });
   }
 
-  loadedNames(people){
-    this.setState({ people });
-    console.log(people);
+  loadedScenes(scenes){
+    this.setState({ scenes });
+    console.log(scenes);
   }
 
   render() {
-    var peopleList = this.state.people
-      .filter((p) => PeopleList.filterPerson(this.state.filter, p))
-      .map((p) => <PersonEntry key={p.id} refs={this.refs} parent={this} data={p} />);
+    var sceneList = this.state.scenes
+      .filter((p) => SceneList.filterList(this.state.filter, p))
+      .map((p) => <SceneEntry key={p.id} refs={this.refs} parent={this} data={p} />);
 
     $('.popover').remove();
 
     return (
       <div>
-        <Socket.Event name={ GetPeopleKey } callback={ this.loadedNames.bind(this) } ref="sock"/>
-        <Socket.Event name={ UpdatePeopleKey } callback={ this.handleStateChange.bind(this) } />
+        <Socket.Event name={ GetScenesKey } callback={ this.loadedScenes.bind(this) } ref="sock"/>
+        <Socket.Event name={ UpdateSceneKey } callback={ this.handleStateChange.bind(this) } />
 
         <form className="form-horizontal">
           <Input label="Search:" labelClassName="col-xs-2" wrapperClassName="col-xs-10">
@@ -90,23 +90,18 @@ export default class PeopleList extends React.Component {
         </form>
         <hr />
 
-        { peopleList }
+        { sceneList }
       </div>    
     );
   }
 
-  static filterPerson(filter, p){
+  static filterList(filter, p){
     if(filter == "")
       return true;
 
     filter = filter.toLowerCase();
 
-    var name = p.firstName + " " + p.lastName;
-    if(name.toLowerCase().indexOf(filter) != -1)
-      return true;
-
-    var position = p.position.miniName;
-    if(position.toLowerCase().indexOf(filter) != -1)
+    if(p.name.toLowerCase().indexOf(filter) != -1)
       return true;
 
     return false;

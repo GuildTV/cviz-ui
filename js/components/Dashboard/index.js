@@ -8,9 +8,7 @@ import {
   Tabs, Tab
 } from 'react-bootstrap';
 
-import PeopleList from './PeopleList';
-import Boards from './Boards';
-import Elections from './Elections';
+import SceneList from './SceneList';
 import Footer from './Footer';
 
 /*
@@ -32,17 +30,7 @@ export default class Dashboard extends React.Component {
           <Grid>
             <Row>
               <Col xs={12}>
-                <Tabs animation={false}>
-                  <Tab eventKey={1} title="People">
-                    <PeopleList />
-                  </Tab>
-                  <Tab eventKey={2} title="Boards">
-                    <Boards />
-                  </Tab>
-                  <Tab eventKey={3} title="Elections" >
-                    <Elections />
-                  </Tab>
-                </Tabs>
+                <SceneList />
               </Col>
             </Row>
           </Grid>
