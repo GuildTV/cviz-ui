@@ -11,4 +11,6 @@ let Scene = thinky.createModel('Scene', {
   order: type.number().integer().min(0)
 });
 
+Scene.ensureIndex("order");
+
 export default Scene

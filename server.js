@@ -6,7 +6,7 @@ import { webui_port } from "./config"
 
 import sceneController from './controllers/scene';
 import templateController from './controllers/template';
-// import { setup as graphSetup, bind as graphBind } from './controllers/graphs';
+import { setup as queueSetup, bind as queueBind } from './controllers/queued';
 
 import Models from "./models"
 const { Person, Position } = Models;
@@ -23,7 +23,7 @@ const io = require('socket.io')(server);
 app.use(bodyParser.urlencoded({ extended: false } ));
 app.use(express.static('static'));
 
-// graphSetup(Models);
+queueSetup(Models, app, io);
 
 // Set socket.io listeners.
 io.sockets.on('connection', (socket) => {
@@ -35,8 +35,8 @@ io.sockets.on('connection', (socket) => {
 
   sceneController(Models, socket);
 
-  templateController(Models, socket)
-  // graphBind(Models, socket);
+  templateController(Models, socket);
+  queueBind(Models, socket);
 });
 
 // Set Express routes.

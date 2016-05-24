@@ -65,41 +65,11 @@ export default function(Models, socket, config){
     }
   });
 
-  socket.on('runTemplate', data => {
-    console.log("runTemplate", data);
+  socket.on('runTemplate', runTemplate);
 
-    // not pretty, but data needs to be passed as an object of strings
-    var templateData = {};
+  socket.on('templateGo', goTemplate);
 
-    for(var k in data.data.data) {
-      const d = data.data.data[k];
-
-      templateData[d.name] = d.value;
-    }
-
-    client.write(JSON.stringify({
-      type: "LOAD",
-      filename: data.template,
-      templateData: templateData,
-      templateDataId: data.dataId
-    }));
-  });
-
-  socket.on('templateGo', data => {
-    console.log("templateGo");
-
-    client.write(JSON.stringify({
-      type: "CUE"
-    }));
-  });
-
-  socket.on('templateKill', data => {
-    console.log("templateKill");
-
-    client.write(JSON.stringify({
-      type: "KILL"
-    }));
-  });
+  socket.on('templateKill', killTemplate);
 
   // TODO - send templateState at appropriate points
   // data format: 
@@ -108,4 +78,40 @@ export default function(Models, socket, config){
   //   dataId: "ado-ben",
   //   templateId: "lowerThird"
   // }
+}
+
+export function runTemplate (data){
+  console.log("runTemplate", data);
+
+  // not pretty, but data needs to be passed as an object of strings
+  var templateData = {};
+
+  for(var k in data.data.data) {
+    const d = data.data.data[k];
+
+    templateData[d.name] = d.value;
+  }
+
+  client.write(JSON.stringify({
+    type: "LOAD",
+    filename: data.template,
+    templateData: templateData,
+    templateDataId: data.dataId
+  }));
+}
+
+export function goTemplate (){
+  console.log("templateGo");
+
+  client.write(JSON.stringify({
+    type: "CUE"
+  }));
+}
+
+export function killTemplate(){
+  console.log("templateKill");
+
+  client.write(JSON.stringify({
+    type: "KILL"
+  }));
 }
