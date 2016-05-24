@@ -43,7 +43,13 @@ export function setup(Models, app, io){
       if(!data || data.length == 0)
         return res.send("No template selected");
 
-      runTemplate(data[0]);
+      const compiled = {
+        data: data[0],
+        template: data[0].template,
+        dataId: data[0].name
+      };
+
+      runTemplate(compiled);
       io.emit('apiRunScene');
       res.send("OK");
     });
