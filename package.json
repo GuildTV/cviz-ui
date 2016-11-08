@@ -1,13 +1,13 @@
 {
   "name": "cviz-ui",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A simple web interface for cviz",
   "scripts": {
     "start": "NODE_ENV=production ./node_modules/.bin/babel-node ./server.js",
-    "rethink": "rethinkdb --http-port 8080",
     "dev": "NODE_ENV=development nodemon --ignore dumps/ --exec babel-node ./server.js",
-    "lint": "NODE_ENV=test eslint --ext .js ."
+    "lint": "NODE_ENV=test eslint --ext .js .",
+    "migrate": "NODE_ENV=development sequelize --config=sequelize.json db:migrate"
   },
   "repository": {
     "type": "git",
@@ -28,8 +28,7 @@
     "gulp-util": "^3.0.7",
     "history": "^1.15.0",
     "jquery": "^2.2.0",
-    "linq": "^3.0.5",
-    "lodash": "^3.10.1",
+    "mysql": "^2.12.0",
     "node-uuid": "^1.4.7",
     "promise-map-series": "^0.2.2",
     "react": "^0.14.0",
@@ -39,9 +38,10 @@
     "react-dom": "^0.14.0",
     "react-router": "^1.0.2",
     "react-socket": "^0.1.4",
+    "sequelize": "^3.24.8",
+    "sequelize-cli": "^2.4.0",
     "socket.io": "^1.4.5",
     "socket.io-client": "^1.4.5",
-    "thinky": "^2.2.4",
     "webpack": "^1.12.1",
     "webpack-dev-server": "^1.12.1"
   },

@@ -1,13 +1,11 @@
-var net = require('net');
-var linq = require('linq');
-var mapSeries = require('promise-map-series');
+import net from 'net';
 
 import { cvizHost, cvizPort } from "../config"
 
-var lastState = {};
-var pingInterval = null;
+let lastState = {};
+let pingInterval = null;
 
-var client = new net.Socket();
+const client = new net.Socket();
 client.setNoDelay(true);
 client.setTimeout(500);
 
@@ -49,8 +47,6 @@ client.on('close', () => {
 });
 
 export default function(Models, socket, config){
-  let { Person, Position } = Models;
-
   socket.emit('templateState', lastState);
   
   client.on('data', (data) => {
@@ -70,23 +66,15 @@ export default function(Models, socket, config){
   socket.on('templateGo', goTemplate);
 
   socket.on('templateKill', killTemplate);
-
-  // TODO - send templateState at appropriate points
-  // data format: 
-  // {
-  //   state: "STOP", // or WAIT or PLAYING
-  //   dataId: "ado-ben",
-  //   templateId: "lowerThird"
-  // }
 }
 
 export function runTemplate (data){
   console.log("runTemplate", data);
 
   // not pretty, but data needs to be passed as an object of strings
-  var templateData = {};
+  const templateData = {};
 
-  for(var k in data.data.data) {
+  for(let k in data.data.data) {
     const d = data.data.data[k];
 
     templateData[d.name] = d.value;

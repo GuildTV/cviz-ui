@@ -1,10 +1,4 @@
 export const webui_port = 8088;
 
-export const thinky_options = {
-  host: "localhost",
-  port: 28015,
-  db: "guild_elections"
-};
-
-export const cvizHost = "192.168.27.62";
+export const cvizHost = "10.42.13.100";
 export const cvizPort = 3456;
