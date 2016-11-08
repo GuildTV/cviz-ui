@@ -8,6 +8,7 @@ module.exports = {
     filename: 'static/app.js',
     publicPath: "static"
   },
+  plugins: [],
   module: {
     loaders: [
       {
@@ -17,7 +18,9 @@ module.exports = {
         query: {
           presets: ['es2015', 'react', 'stage-0']
         }
-      }
+      },
+      { test: /\.less$/, loader: "style!css!less" },
+      { test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$|\.woff2$|\.ttf$|\.eot$|\.otf$|\.wav$|\.mp3$/, loader: "file" }
     ]
   },
 };

@@ -142,7 +142,7 @@ export default class Scene extends React.Component {
 
     return (
       <div>
-        <Socket.Event name={ SaveSceneKey } ref="sock"/>
+        <Socket.Event name={ SaveSceneKey } callback={() => {}} ref="sock"/>
 
         <form className="form-horizontal" onSubmit={this.handleSubmit.bind(this)}>
           <fieldset>
