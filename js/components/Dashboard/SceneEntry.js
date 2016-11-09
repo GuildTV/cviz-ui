@@ -3,6 +3,7 @@
 */
 
 import React from 'react';
+import Socket from 'react-socket';
 import {
   Col,
   Button
@@ -19,12 +20,13 @@ const RunTemplateKey = "runTemplate";
 
 export default class SceneEntry extends React.Component {
   runTemplate(){
-    console.log("Running template:", this.props.data.template);
+    const { data } = this.props;
+    console.log("Running template:", data.template);
 
-    this.props.sock.socket.emit(RunTemplateKey, {
-      template: this.props.data.template,
-      data: this.props.data,
-      dataId: this.props.data.name
+    this.sock.socket.emit(RunTemplateKey, {
+      template: data.template,
+      data: data,
+      dataId: data.name
     });
   }
 
@@ -34,6 +36,7 @@ export default class SceneEntry extends React.Component {
 
     return (
       <Col md={4} sm={6} xs={12} style={{ textAlign: "center" }}>
+        <Socket.Event name={ RunTemplateKey } callback={() => {}} ref={e => this.sock = e} />
         <p>
           <Button onClick={e => this.runTemplate(e)} style={style}>
             <span style={{mixBlendMode: "difference", color: "white", fontWeight: "bold"}}>

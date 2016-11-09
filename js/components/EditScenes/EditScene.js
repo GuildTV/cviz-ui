@@ -44,10 +44,6 @@ export class EditScene extends React.Component {
       this.state = parsed;
   }
 
-  componentDidMount(){
-    console.log(this.props)
-  }
-
   componentWillUnmount(){
     this.setState({});
   }
@@ -81,7 +77,7 @@ export class EditScene extends React.Component {
 
     this.sock.socket.emit(DeleteSceneKey, { id });
 
-    this.props.history.pushState(null, "/scenes")
+    this.props.history.pushState(null, "/scenes");
   }
 
   handleNameChange(e) {
@@ -158,7 +154,7 @@ export class EditScene extends React.Component {
 
     this.sock.socket.emit(SaveSceneKey, compiledData);
 
-    this.props.history.pushState(null, "/scenes")
+    this.props.history.pushState(null, "/scenes");
   }
 
   AddData(){
@@ -199,7 +195,7 @@ export class EditScene extends React.Component {
     if (e.id !== this.state.id)
       return;
 
-    this.props.history.pushState(null, "/scenes")
+    this.props.history.pushState(null, "/scenes");
   }
 
   handleSceneChange(e){

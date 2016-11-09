@@ -1,6 +1,54 @@
 import mapSeries from 'promise-map-series';
 
-export default function(Models, socket){
+export function setup(Models, app){
+  let { Scene, SceneData } = Models;
+
+  app.get('/api/scenes', (req, res) => {
+    Scene.findAll({
+      include: [ SceneData ]
+    }).then(scenes => res.send(scenes));
+  });
+  // app.post('/playlist/previous', function(req, res){
+  //   Scene.orderBy({ index: thinky.r.asc("order") }).run().then(function(data){
+  //     const index = data.findIndex(e => e.id == queuedId);
+  //     const newIndex = index<0 ? 0 : (index == 0 ? data.length-1 : index-1);
+
+  //     queuedId = data[newIndex].id;
+  //     io.emit('getQueued', data[newIndex]);
+  //     res.send(data[newIndex]);
+  //   });
+  // });
+
+  // app.post('/scene/go', function(req, res){
+  //   goTemplate();
+  //   io.emit('apiGoScene');
+  //   res.send("OK");
+  // });
+  // app.post('/scene/kill', function(req, res){
+  //   killTemplate();
+  //   io.emit('apiKillScene');
+  //   res.send("OK");
+  // });
+  // app.post('/scene/run', function(req, res){
+  //   Scene.filter({id: queuedId}).run().then(function(data) {
+  //     if(!data || data.length == 0)
+  //       return res.send("No template selected");
+
+  //     const compiled = {
+  //       data: data[0],
+  //       template: data[0].template,
+  //       dataId: data[0].name
+  //     };
+
+  //     runTemplate(compiled);
+  //     io.emit('apiRunScene');
+  //     res.send("OK");
+  //   });
+  // });
+
+}
+
+export function bind(Models, socket){
   const { Scene, SceneData, sequelize } = Models;
 
   socket.on('updateScene', (data) => {

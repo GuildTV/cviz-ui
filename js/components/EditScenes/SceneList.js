@@ -7,7 +7,7 @@ import Socket from 'react-socket';
 import base64 from 'base-64';
 import {
   Grid, Row, Col,
-  Table, Button
+  Table
 } from 'react-bootstrap';
 
 /*

@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 
 import { webui_port } from "./config";
 
-import sceneController from './controllers/scene';
+import { setup as sceneSetup, bind as sceneBind } from './controllers/scene';
 import templateController from './controllers/template';
 // import { setup as queueSetup, bind as queueBind } from './controllers/queued';
 
@@ -23,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: false } ));
 app.use(express.static('static'));
 
 // queueSetup(Models, app, io);
+sceneSetup(Models, app);
 
 // Set socket.io listeners.
 io.sockets.on('connection', (socket) => {
@@ -32,7 +33,7 @@ io.sockets.on('connection', (socket) => {
     console.log('user disconnected');
   });
 
-  sceneController(Models, socket);
+  sceneBind(Models, socket);
 
   templateController(Models, socket);
   // queueBind(Models, socket);

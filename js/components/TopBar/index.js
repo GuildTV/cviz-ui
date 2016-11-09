@@ -12,10 +12,6 @@ import {
 } from 'react-bootstrap';
 
 /*
-* Internal Dependancies
-*/
-
-/*
 * Variables
 */
 const RunTemplateKey = "runTemplate";

@@ -7,16 +7,9 @@ import {
   Row, Col, 
   Input, Button,
 } from 'react-bootstrap';
-import Socket from 'react-socket';
+import axios from 'axios';
 
 import SceneEntry from './SceneEntry';
-
-/*
-* Variables
-*/
-const GetScenesKey = "getScenes";
-const UpdateSceneKey = "updateScene";
-const DeleteSceneKey = "deleteScene";
 
 /*
 * React
@@ -35,37 +28,19 @@ export default class SceneList extends React.Component {
   }
 
   updateData(){
-    this.sock.socket.emit(GetScenesKey);
-  }
-
-  handleStateChange(newData) {
-    console.log("SCENES", newData);
-
-    const scenes = this.state.scenes;
-    newData.map(scene => {
-      const index = scenes.findIndex(p => p.uid == scene.uid);
-      if(index >= 0)
-        scenes[index] = scene;
-      else  
-        scenes.push(scene);
+    axios.get('/api/scenes')
+    .then(res => {
+      this.setState({ scenes: res.data || [] });
+      console.log("Loaded " + res.data.length + " scenes");
+    })
+    .catch(err => {
+      this.setState({ scenes: [] });
+      alert("Get scenes error:", err);
     });
-
-    console.log(scenes);
-    this.setState({scenes});
-  }
-
-  handleDelete(id){
-    const scenes = this.state.scenes.filter(s => s.id != id);
-    this.setState({ scenes });
   }
 
   filterNames(e){
     this.setState({ filter: e.target.value });
-  }
-
-  loadedScenes(scenes){
-    this.setState({ scenes });
-    console.log(scenes);
   }
 
   render() {
@@ -75,10 +50,6 @@ export default class SceneList extends React.Component {
 
     return (
       <div>
-        <Socket.Event name={ GetScenesKey } callback={e => this.loadedScenes(e)} ref={e => this.sock = e} />
-        <Socket.Event name={ UpdateSceneKey } callback={e => this.handleStateChange(e)} />
-        <Socket.Event name={ DeleteSceneKey } callback={e => this.handleDelete(e)} />
-
         <form className="form-horizontal">
           <Input label="Search:" labelClassName="col-xs-2" wrapperClassName="col-xs-10">
             <Row>
