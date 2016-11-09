@@ -71,12 +71,41 @@ export default class Scene extends React.Component {
     this.setState({ order: parseInt(e.target.value) });
   }
 
+  validateScene(dataset){
+    const { name, value } = dataset;
+
+    if (!name || !value || name.length < 2 || value.length < 5)
+      return "Missing data for dataset '" + name + "'";
+
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(value, "text/xml");
+    if (!xmlDoc || this.hasAnyParserErrors(xmlDoc.documentElement))
+      return "Failed to parse dataset xml for '" + name + "'";
+
+    return true;
+  }
+
+  hasAnyParserErrors(elm){
+    if (!elm)
+      return false;
+
+    if (elm.nodeName == "parsererror")
+      return true;
+
+    for (let e of elm.childNodes){
+      if (this.hasAnyParserErrors(e))
+        return true;
+    }
+
+    return false;
+  }
+
   handleSubmit(e) {
     console.log(this.state);
 
     e.preventDefault();
 
-    let {name, template, id, SceneData, order} = this.state;
+    const {name, template, id, SceneData, order} = this.state;
 
     if (!name || !template) {
       //todo error handling
@@ -84,7 +113,16 @@ export default class Scene extends React.Component {
       return;
     }
 
-    let compiledData = {
+    for(let dataset of SceneData){
+      const err = this.validateScene(dataset);
+      if (err === true)
+        continue;
+
+      alert(err);
+      return;
+    }
+
+    const compiledData = {
       id,
       name,
       template,
