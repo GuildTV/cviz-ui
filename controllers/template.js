@@ -76,8 +76,8 @@ export function runTemplate (data){
   // not pretty, but data needs to be passed as an object of strings
   const templateData = {};
 
-  for(let k in data.data.data) {
-    const d = data.data.data[k];
+  for(let k in data.data.SceneData) {
+    const d = data.data.SceneData[k];
 
     templateData[d.name] = d.value;
   }
