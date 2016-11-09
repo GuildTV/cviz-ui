@@ -16,8 +16,11 @@ import Scene from './Scene';
 * React
 */
 export default class EditScenes extends React.Component {
-  LoadData(e){
+  LoadData(e, clone){
     const data = JSON.parse(e.target.getAttribute('data'));
+    
+    if (clone)
+      data.id = undefined;
 
     console.log("Editing:", data.id);
     
@@ -30,7 +33,7 @@ export default class EditScenes extends React.Component {
         <Grid>
           <Row>
             <Col xs={12}>
-              <SceneList onEdit={e => this.LoadData(e)} />
+              <SceneList onEdit={(e, c) => this.LoadData(e, c)} />
               <Scene ref={e => this.editElm = e} />
             </Col>
           </Row>

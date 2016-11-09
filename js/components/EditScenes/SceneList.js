@@ -63,7 +63,8 @@ export default class SceneList extends React.Component {
           <td>{ (scene.SceneData || []).length }</td>
           <td>{ scene.order }</td>
           <td>
-            <Button onClick={e => this.props.onEdit(e)} data={JSON.stringify(scene)}>Edit</Button>
+            <Button bsStyle="primary" onClick={e => this.props.onEdit(e, false)} data={JSON.stringify(scene)}>Edit</Button>&nbsp;
+            <Button bsStyle="warning" onClick={e => this.props.onEdit(e, true)} data={JSON.stringify(scene)}>Clone</Button>
           </td>
         </tr>
       );
