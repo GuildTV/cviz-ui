@@ -13,6 +13,7 @@ import { Table, Button } from 'react-bootstrap';
 
 const GetSceneKey = "getScenes";
 const UpdateSceneKey = "updateScene";
+const DeleteSceneKey = "deleteScene";
 
 /*
 * React
@@ -30,7 +31,7 @@ export default class SceneList extends React.Component {
   handleStateChange(newData) {
     console.log("SCENES", newData);
 
-    let scenes = this.state.scenes;
+    const scenes = this.state.scenes;
     newData.map(scene => {
       var index = scenes.findIndex(s => s.id == scene.id);
       if(index >= 0)
@@ -42,19 +43,25 @@ export default class SceneList extends React.Component {
     this.setState({scenes});
   }
 
+  handleDelete(id){
+    const scenes = this.state.scenes.filter(s => s.id != id);
+    this.setState({ scenes });
+  }
+
   componentDidMount() {
     this.refs.sock.socket.emit(GetSceneKey)
   }
 
   render() {
-    let rows = this.state.scenes.map((scene) => {
+    const rows = this.state.scenes.map((scene) => {
       return (
         <tr key={ JSON.stringify(scene) }>
           <td>{ scene.name }</td>
           <td>{ scene.template }</td>
+          <td>{ (scene.SceneData || []).length }</td>
           <td>{ scene.order }</td>
           <td>
-            <Button onClick={this.props.onEdit} data={JSON.stringify(scene)}>Edit</Button>
+            <Button onClick={e => this.props.onEdit(e)} data={JSON.stringify(scene)}>Edit</Button>
           </td>
         </tr>
       );
@@ -62,13 +69,15 @@ export default class SceneList extends React.Component {
 
     return (
       <div>
-        <Socket.Event name={ GetSceneKey } callback={ this.handelInitialData.bind(this) } ref="sock"/>
-        <Socket.Event name={ UpdateSceneKey } callback={ this.handleStateChange.bind(this) } />
+        <Socket.Event name={ GetSceneKey } callback={e => this.handelInitialData(e)} ref="sock"/>
+        <Socket.Event name={ UpdateSceneKey } callback={e => this.handleStateChange(e)} />
+        <Socket.Event name={ DeleteSceneKey } callback={e => this.handleDelete(e)} />
         <Table>
           <thead>
             <tr>
               <th>Name</th>
               <th>Template</th>
+              <th>Datasets</th>
               <th>Order</th>
               <th></th>
             </tr>

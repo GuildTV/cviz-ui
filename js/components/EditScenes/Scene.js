@@ -3,7 +3,6 @@
 */
 
 import React from 'react';
-import update from 'react-addons-update'
 import Socket from 'react-socket';
 import uuid from 'node-uuid';
 
@@ -14,6 +13,7 @@ import { Input, ButtonInput, Button } from 'react-bootstrap';
 */
 
 const SaveSceneKey = "updateScene";
+const DeleteSceneKey = "deleteScene";
 
 const ValuePlaceholderText = "<templateData><componentData id=\"data\"><![CDATA[{\"json\":\"data here\"}]]></componentData></templateData>\n\n"
                            + "OR\n\n"
@@ -30,11 +30,7 @@ export default class Scene extends React.Component {
       id: undefined,
       name: '', 
       template: '', 
-      data: [{
-        id: uuid.v4(),
-        name: "",
-        value: ""
-      }], 
+      SceneData: [],
       order: 9
     };
   }
@@ -45,17 +41,24 @@ export default class Scene extends React.Component {
       this.setState({
         id: undefined,
         name: '', 
-        template: '', 
-        data: [{
-          id: uuid.v4(),
-          name: "",
-          value: ""
-        }], 
+        template: '',
+        SceneData: [],
         order: 9
       });
     } else {
       this.setState(data);
     }
+  }
+
+  DoDelete(){
+    const { id } = this.state;
+
+    if (!id)
+      return;
+
+    this.LoadForm();
+
+    this.refs.sock.socket.emit(DeleteSceneKey, { id });
   }
 
   handleNameChange(e) {
@@ -74,7 +77,7 @@ export default class Scene extends React.Component {
 
     e.preventDefault();
 
-    let {name, template, id, data, order} = this.state;
+    let {name, template, id, SceneData, order} = this.state;
 
     if (!name || !template) {
       //todo error handling
@@ -86,58 +89,56 @@ export default class Scene extends React.Component {
       id,
       name,
       template,
-      data,
+      SceneData,
       order
     }
 
     this.refs.sock.socket.emit(SaveSceneKey, compiledData)
 
-    this.LoadForm();
+    // this.LoadForm();
   }
 
   AddData(e){
-    var data = this.state.data;
-    data.push({
-      id: uuid.v4(),
+    const SceneData = this.state.SceneData || [];
+    SceneData.push({
+      id: undefined,
       name: "",
       value: ""
     })
-    this.setState({ data });
+    this.setState({ SceneData });
   }
 
-  handleFieldNameChange(e){
+  handleDatasetNameChange(e){
     const id = e.target.getAttribute('data-id');
-    const val = e.target.value;
-    var data = this.state.data;
+    const SceneData = this.state.SceneData;
     
-    for(let i=0; i<data.length; i++){
-      if(data[i].id == id)
-        data[i].name = val;
+    for(let i=0; i<SceneData.length; i++){
+      if(SceneData[i].id == id)
+        SceneData[i].name = e.target.value;
     }
 
-    this.setState({ data });
+    this.setState({ SceneData });
   }
 
-  handleFieldValueChange(e){
+  handleDatasetValueChange(e){
     const id = e.target.getAttribute('data-id');
-    const val = e.target.value;
-    var data = this.state.data;
+    const SceneData = this.state.SceneData;
     
-    for(let i=0; i<data.length; i++){
-      if(data[i].id == id)
-        data[i].value = val;
+    for(let i=0; i<SceneData.length; i++){
+      if(SceneData[i].id == id)
+        SceneData[i].value = e.target.value;
     }
 
-    this.setState({ data });
+    this.setState({ SceneData });
   }
 
   render() {
-    var dataFields = this.state.data.map(d => (<div key={d.id}>
+    const dataFields = (this.state.SceneData || []).map((d, i) => (<div key={i}>
         <hr />
-        <Input type="text" label="Field Name" labelClassName="col-xs-2" wrapperClassName="col-xs-10" 
-          onChange={this.handleFieldNameChange.bind(this)} data-id={d.id} value={d.name} placeholder="Name used in cviz" />
+        <Input type="text" label="Dataset Name" labelClassName="col-xs-2" wrapperClassName="col-xs-10" 
+          onChange={this.handleDatasetNameChange.bind(this)} data-id={d.id} value={d.name} placeholder="Name used in cviz" />
         <Input type="textarea" label="Value" labelClassName="col-xs-2" wrapperClassName="col-xs-10" rows={5} 
-          onChange={this.handleFieldValueChange.bind(this)} data-id={d.id} value={d.value} placeholder={ValuePlaceholderText} />
+          onChange={this.handleDatasetValueChange.bind(this)} data-id={d.id} value={d.value} placeholder={ValuePlaceholderText} />
       </div>));
 
     return (
@@ -161,8 +162,9 @@ export default class Scene extends React.Component {
            
             <Input label=" " labelClassName="col-xs-2" wrapperClassName="col-xs-10">
               <Button type="submit" bsStyle="primary">Save</Button>&nbsp;
-              <Button bsStyle="info" onClick={() => this.AddData()}>Add field</Button>&nbsp;
-              <Button bsStyle="warning" onClick={() => this.LoadForm()}>Clear</Button>
+              <Button bsStyle="info" onClick={() => this.AddData()}>Add dataset</Button>&nbsp;
+              <Button bsStyle="warning" onClick={() => this.LoadForm()}>Clear</Button>&nbsp;
+              { this.state.id ? <Button bsStyle="danger" onClick={() => this.DoDelete()}>Delete</Button> : "" }
             </Input>
           </fieldset>
         </form>

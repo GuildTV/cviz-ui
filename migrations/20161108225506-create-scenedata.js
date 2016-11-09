@@ -1,7 +1,7 @@
 module.exports = {
   up: function (queryInterface, Sequelize) {
     return queryInterface.createTable(
-      'SceneDatas',
+      'SceneData',
       {
         id: {
           type: Sequelize.INTEGER,
@@ -40,10 +40,19 @@ module.exports = {
       },{
         charset: 'utf8'
       }
-    );
+    ).then(function(){
+      return queryInterface.addIndex(
+        'SceneData',
+        ['SceneId', 'name'],
+        {
+          indexName: 'scene_name_unique',
+          indicesType: 'UNIQUE'
+        }
+      );
+    });
   },
 
   down: function (queryInterface) {
-    return queryInterface.dropTable('SceneDatas');
+    return queryInterface.dropTable('SceneData');
   }
 };

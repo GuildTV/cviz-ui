@@ -17,6 +17,7 @@ import SceneEntry from './SceneEntry';
 */
 const GetScenesKey = "getScenes";
 const UpdateSceneKey = "updateScene";
+const DeleteSceneKey = "deleteScene";
 
 /*
 * React
@@ -54,6 +55,11 @@ export default class SceneList extends React.Component {
     this.setState({scenes});
   }
 
+  handleDelete(id){
+    const scenes = this.state.scenes.filter(s => s.id != id);
+    this.setState({ scenes });
+  }
+
   filterNames(e){
     var filter = this.refs.filter.getValue();
     this.setState({ filter });
@@ -75,6 +81,7 @@ export default class SceneList extends React.Component {
       <div>
         <Socket.Event name={ GetScenesKey } callback={ this.loadedScenes.bind(this) } ref="sock"/>
         <Socket.Event name={ UpdateSceneKey } callback={ this.handleStateChange.bind(this) } />
+        <Socket.Event name={ DeleteSceneKey } callback={e => this.handleDelete(e)} />
 
         <form className="form-horizontal">
           <Input label="Search:" labelClassName="col-xs-2" wrapperClassName="col-xs-10">

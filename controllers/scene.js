@@ -1,48 +1,79 @@
+import mapSeries from 'promise-map-series';
+
 export default function(Models, socket){
-  let { Scene } = Models;
+  const { Scene, SceneData, sequelize } = Models;
 
   socket.on('updateScene', (data) => {
-    console.log("Save Scene: ", data.uid);
+    console.log("Save Scene: ", data.id);
 
-    if(data.id)
-      return Scene.filter({id: data.id}).run().then(function(scenes){
-        if(scenes.length == 0)
-          return console.log("Error loading scene: " + data.id);
+    if (data.id){
+      return Scene.findById(data.id, {
+        include: [ SceneData ]
+      }).then(scene => {
+        return sequelize.transaction(function (t) {
+          const got = scene.SceneData || [];
+          const newOnes = data.SceneData.filter(d => got.findIndex(e => e.name == d.name) < 0);
+          const existingOnes = data.SceneData.filter(d => got.findIndex(e => e.name == d.name) >= 0);
 
-        let scene = scenes[0]
-        scene.merge(data);
+          const newData = newOnes.map(d => {
+            d.id = null;
+            d.SceneId = data.id;
 
-        scene.save().then(function(doc) {
-          console.log("Scene added to DB: ", doc);
-
-          // we need to send the position too, so data needs reloading
-          Scene.filter({id: doc.id}).run().then(function(scenes){
-            socket.emit('updateScene', scenes);
+            return d;
           });
-        }).error(function(error){
-          console.log("Error saving new scene: ", error);
+
+          const names = newData.map(n => n.name).concat(existingOnes.map(n => n.name));
+
+          return SceneData.bulkCreate(newData, { transaction: t }).then(() => {
+            return mapSeries(existingOnes, d => {
+            d.id = null;
+              d.SceneId = data.id;
+              return SceneData.update(d, {
+                where: {
+                  SceneId: data.id,
+                  name: d.name
+                },
+                transaction: t
+              });
+            }).then(() => {
+              return SceneData.destroy({
+                where: {
+                  SceneId: data.id,
+                  name: { $notIn: names }
+                },
+                transaction: t
+              });
+            });
+          });
         });
-      });
+      }).then(() => {
+        return Scene.findById(data.id, { 
+          include: [ SceneData ]
+        }).then(scene => socket.emit('updateScene', [ scene ]));
+      }).catch(error => console.log("Error updating scene:", error));
+    }
 
-    return Scene.save(data).then(function(doc) {
-      console.log("Scene added to DB: ", doc);
+    return Scene.create(data, {
+      include: SceneData
+    }).then(res => {
+      console.log("Scene added to DB: ", res);
 
-      // we need to send the position too, so data needs reloading
-      Scene.filter({id: doc.id}).run().then(function(people){
-        socket.emit('updateScene', people);
-      });
-
-    }).error(function(error){
-        console.log("Error saving new person: ", error);
-    });
+      socket.emit('updateScene', [ res ]);
+    }).catch(err => console.log("Error saving new scene:", err));
   });
 
   socket.on('getScenes', () => {
-    Scene.run().then(function(data) {
+    Scene.findAll({
+      include: [ SceneData ]
+    }).then(data => {
       socket.emit('getScenes', data);
-    }).error(function(error) {
-      console.log("Error getting people: ", error)
-    });
+    }).catch(error => console.log("Error getting people:", error));
+  });
+
+  socket.on('deleteScene', (data) => {
+    Scene.findById(data.id).then(data => {
+      return data.destroy().then(() => socket.emit('deleteScene', data.id));
+    }).catch(error => console.log("Error deleting scene:", error));
   });
 
 }
