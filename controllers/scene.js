@@ -16,7 +16,7 @@ export default function(Models, socket){
           const existingOnes = data.SceneData.filter(d => got.findIndex(e => e.name == d.name) >= 0);
 
           const newData = newOnes.map(d => {
-            d.id = undefined;
+            delete d.id;
             d.SceneId = data.id;
 
             return d;
@@ -26,7 +26,7 @@ export default function(Models, socket){
 
           return SceneData.bulkCreate(newData, { transaction: t }).then(() => {
             return mapSeries(existingOnes, d => {
-              d.id = undefined;
+              delete d.id;
               d.SceneId = data.id;
               return SceneData.update(d, {
                 where: {

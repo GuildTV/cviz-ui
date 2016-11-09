@@ -4,8 +4,11 @@
 
 import React from 'react';
 import Socket from 'react-socket';
-
-import { Table, Button } from 'react-bootstrap';
+import base64 from 'base-64';
+import {
+  Grid, Row, Col,
+  Table, Button
+} from 'react-bootstrap';
 
 /*
 * Variables
@@ -18,7 +21,7 @@ const DeleteSceneKey = "deleteScene";
 /*
 * React
 */
-export default class SceneList extends React.Component {
+export class EditSceneList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -56,15 +59,21 @@ export default class SceneList extends React.Component {
 
   render() {
     const rows = this.state.scenes.map((scene) => {
+      console.log(scene);
+      const editData = base64.encode(JSON.stringify(scene));
+      const cloneRaw = Object.assign({}, scene);
+      delete cloneRaw.id;
+      const cloneData = base64.encode(JSON.stringify(cloneRaw));
+
       return (
-        <tr key={ JSON.stringify(scene) }>
+        <tr key={ scene.name }>
           <td>{ scene.name }</td>
           <td>{ scene.template }</td>
           <td>{ (scene.SceneData || []).length }</td>
           <td>{ scene.order }</td>
           <td>
-            <Button bsStyle="primary" onClick={e => this.props.onEdit(e, false)} data={JSON.stringify(scene)}>Edit</Button>&nbsp;
-            <Button bsStyle="warning" onClick={e => this.props.onEdit(e, true)} data={JSON.stringify(scene)}>Clone</Button>
+            <a className="btn btn-primary" href={`#/scenes/edit/${editData}`}>Edit</a>&nbsp;
+            <a className="btn btn-warning" href={`#/scenes/edit/${cloneData}`}>Clone</a>
           </td>
         </tr>
       );
@@ -72,23 +81,33 @@ export default class SceneList extends React.Component {
 
     return (
       <div>
-        <Socket.Event name={ GetSceneKey } callback={e => this.handelInitialData(e)} ref={e => this.sock = e} />
-        <Socket.Event name={ UpdateSceneKey } callback={e => this.handleStateChange(e)} />
-        <Socket.Event name={ DeleteSceneKey } callback={e => this.handleDelete(e)} />
-        <Table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Template</th>
-              <th>Datasets</th>
-              <th>Order</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-          { rows }
-          </tbody>
-        </Table>
+        <Grid>
+          <Row>
+            <Col xs={12}>
+              <Socket.Event name={ GetSceneKey } callback={e => this.handelInitialData(e)} ref={e => this.sock = e} />
+              <Socket.Event name={ UpdateSceneKey } callback={e => this.handleStateChange(e)} />
+              <Socket.Event name={ DeleteSceneKey } callback={e => this.handleDelete(e)} />
+              <h2>
+                Scenes&nbsp;&nbsp;
+                <a className="btn btn-success" href="#/scenes/edit/==">Create</a>
+              </h2>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Template</th>
+                    <th>Datasets</th>
+                    <th>Order</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                { rows }
+                </tbody>
+              </Table>
+            </Col>
+          </Row>
+        </Grid>
       </div>
     );
   }
