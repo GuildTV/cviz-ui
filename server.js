@@ -2,13 +2,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-import { webui_port } from "./config"
+import { webui_port } from "./config";
 
 import sceneController from './controllers/scene';
 import templateController from './controllers/template';
 // import { setup as queueSetup, bind as queueBind } from './controllers/queued';
 
-import Models from "./models"
+import Models from "./models";
 
 const app = express();
 

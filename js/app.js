@@ -1,11 +1,11 @@
 import createHashHistory from 'history/lib/createHashHistory';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router } from 'react-router'
+import { Router } from 'react-router';
 
 import '../less/app.less';
 
-import TopBar from './components/TopBar'
+import TopBar from './components/TopBar';
 
 import routes from './routes';
 

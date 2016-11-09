@@ -4,9 +4,8 @@
 
 import React from 'react';
 import Socket from 'react-socket';
-import uuid from 'node-uuid';
 
-import { Input, ButtonInput, Button } from 'react-bootstrap';
+import { Input, Button } from 'react-bootstrap';
 
 /*
 * Variables
@@ -58,7 +57,7 @@ export default class Scene extends React.Component {
 
     this.LoadForm();
 
-    this.refs.sock.socket.emit(DeleteSceneKey, { id });
+    this.sock.socket.emit(DeleteSceneKey, { id });
   }
 
   handleNameChange(e) {
@@ -91,20 +90,20 @@ export default class Scene extends React.Component {
       template,
       SceneData,
       order
-    }
+    };
 
-    this.refs.sock.socket.emit(SaveSceneKey, compiledData)
+    this.sock.socket.emit(SaveSceneKey, compiledData);
 
-    // this.LoadForm();
+    this.LoadForm();
   }
 
-  AddData(e){
+  AddData(){
     const SceneData = this.state.SceneData || [];
     SceneData.push({
       id: undefined,
       name: "",
       value: ""
-    })
+    });
     this.setState({ SceneData });
   }
 
@@ -136,27 +135,27 @@ export default class Scene extends React.Component {
     const dataFields = (this.state.SceneData || []).map((d, i) => (<div key={i}>
         <hr />
         <Input type="text" label="Dataset Name" labelClassName="col-xs-2" wrapperClassName="col-xs-10" 
-          onChange={this.handleDatasetNameChange.bind(this)} data-id={d.id} value={d.name} placeholder="Name used in cviz" />
+          onChange={e => this.handleDatasetNameChange(e)} data-id={d.id} value={d.name} placeholder="Name used in cviz" />
         <Input type="textarea" label="Value" labelClassName="col-xs-2" wrapperClassName="col-xs-10" rows={5} 
-          onChange={this.handleDatasetValueChange.bind(this)} data-id={d.id} value={d.value} placeholder={ValuePlaceholderText} />
+          onChange={e => this.handleDatasetValueChange(e)} data-id={d.id} value={d.value} placeholder={ValuePlaceholderText} />
       </div>));
 
     return (
       <div>
-        <Socket.Event name={ SaveSceneKey } callback={() => {}} ref="sock"/>
+        <Socket.Event name={ SaveSceneKey } callback={() => {}} ref={e => this.sock = e} />
 
-        <form className="form-horizontal" onSubmit={this.handleSubmit.bind(this)}>
+        <form className="form-horizontal" onSubmit={e => this.handleSubmit(e)}>
           <fieldset>
             <legend>Edit scene</legend>
 
             <Input type="text" label="ID" labelClassName="col-xs-2" wrapperClassName="col-xs-10" disabled value={this.state.id} />
             <Input type="text" label="Name" labelClassName="col-xs-2" wrapperClassName="col-xs-10" 
-              onChange={this.handleNameChange.bind(this)} value={this.state.name} />
+              onChange={e => this.handleNameChange(e)} value={this.state.name} />
             <Input type="text" label="Template" labelClassName="col-xs-2" wrapperClassName="col-xs-10" 
-              onChange={this.handleTemplateChange.bind(this)} value={this.state.template} />
+              onChange={e => this.handleTemplateChange(e)} value={this.state.template} />
 
             <Input type="number" label="Order" min="0" labelClassName="col-xs-2" wrapperClassName="col-xs-10"
-              onChange={this.handleOrderChange.bind(this)} value={this.state.order} />
+              onChange={e => this.handleOrderChange(e)} value={this.state.order} />
 
             { dataFields }
            

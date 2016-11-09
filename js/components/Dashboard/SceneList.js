@@ -3,9 +3,8 @@
 */
 
 import React from 'react';
-import $ from 'jquery';
 import {
-  Grid, Row, Col, 
+  Row, Col, 
   Input, Button,
 } from 'react-bootstrap';
 import Socket from 'react-socket';
@@ -28,7 +27,7 @@ export default class SceneList extends React.Component {
     this.state = {
       scenes: [],
       filter: ""
-    }
+    };
   }
 
   componentDidMount() {
@@ -36,22 +35,22 @@ export default class SceneList extends React.Component {
   }
 
   updateData(){
-    this.refs.sock.socket.emit(GetScenesKey);
+    this.sock.socket.emit(GetScenesKey);
   }
 
   handleStateChange(newData) {
     console.log("SCENES", newData);
 
-    let scenes = this.state.scenes;
+    const scenes = this.state.scenes;
     newData.map(scene => {
-      var index = scenes.findIndex(p => p.uid == scene.uid);
+      const index = scenes.findIndex(p => p.uid == scene.uid);
       if(index >= 0)
         scenes[index] = scene;
       else  
         scenes.push(scene);
     });
 
-    console.log(scenes)
+    console.log(scenes);
     this.setState({scenes});
   }
 
@@ -61,8 +60,7 @@ export default class SceneList extends React.Component {
   }
 
   filterNames(e){
-    var filter = this.refs.filter.getValue();
-    this.setState({ filter });
+    this.setState({ filter: e.target.value });
   }
 
   loadedScenes(scenes){
@@ -71,26 +69,24 @@ export default class SceneList extends React.Component {
   }
 
   render() {
-    var sceneList = this.state.scenes
+    const sceneList = this.state.scenes
       .filter((p) => SceneList.filterList(this.state.filter, p))
-      .map((p) => <SceneEntry key={p.id} refs={this.refs} parent={this} data={p} />);
-
-    $('.popover').remove();
+      .map((p) => <SceneEntry key={p.id} sock={this.sock} parent={this} data={p} />);
 
     return (
       <div>
-        <Socket.Event name={ GetScenesKey } callback={ this.loadedScenes.bind(this) } ref="sock"/>
-        <Socket.Event name={ UpdateSceneKey } callback={ this.handleStateChange.bind(this) } />
+        <Socket.Event name={ GetScenesKey } callback={e => this.loadedScenes(e)} ref={e => this.sock = e} />
+        <Socket.Event name={ UpdateSceneKey } callback={e => this.handleStateChange(e)} />
         <Socket.Event name={ DeleteSceneKey } callback={e => this.handleDelete(e)} />
 
         <form className="form-horizontal">
           <Input label="Search:" labelClassName="col-xs-2" wrapperClassName="col-xs-10">
             <Row>
               <Col xs={10}>
-                <Input type="text" onChange={this.filterNames.bind(this)} ref="filter"  />
+                <Input type="text" onChange={e => this.filterNames(e)} />
               </Col>
               <Col xs={2}>
-                <Button bsStyle="success" onClick={this.updateData.bind(this)}>Refresh Data</Button>
+                <Button bsStyle="success" onClick={() => this.updateData()}>Refresh Data</Button>
               </Col>
             </Row>
           </Input>

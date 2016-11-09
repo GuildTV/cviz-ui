@@ -75,7 +75,7 @@ export function bind(Models, socket){
 
       socket.emit('getQueued', data[0]);
     }).error(function(error) {
-      console.log("Error getting queued: ", error)
+      console.log("Error getting queued: ", error);
     });
   });
 

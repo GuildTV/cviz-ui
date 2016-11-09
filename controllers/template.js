@@ -1,6 +1,6 @@
 import net from 'net';
 
-import { cvizHost, cvizPort } from "../config"
+import { cvizHost, cvizPort } from "../config";
 
 let lastState = {};
 let pingInterval = null;
@@ -24,7 +24,7 @@ client.connect(cvizPort, cvizHost, function() {
 
   pingInterval = setInterval(() => {
     client.write("{}");
-  }, 300)
+  }, 300);
 });
 
 client.on('data', (data) => {
@@ -35,6 +35,7 @@ client.on('data', (data) => {
     lastState = JSON.parse(data);
     console.log("Received", lastState);
   } catch (e){
+    console.log("CViz read error:", e);
   }
 });
 
@@ -46,7 +47,7 @@ client.on('close', () => {
   }
 });
 
-export default function(Models, socket, config){
+export default function(Models, socket){
   socket.emit('templateState', lastState);
   
   client.on('data', (data) => {
@@ -58,6 +59,7 @@ export default function(Models, socket, config){
 
       socket.emit('templateState', data);
     } catch (e){
+      console.log("CViz read error:", e);
     }
   });
 

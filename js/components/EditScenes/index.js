@@ -9,24 +9,19 @@ import { Grid, Row, Col } from 'react-bootstrap';
 /*
 * Internal Dependancies
 */
-import SceneList from './SceneList'
-import Scene from './Scene'
-
-/*
-* Variables
-*/
+import SceneList from './SceneList';
+import Scene from './Scene';
 
 /*
 * React
 */
 export default class EditScenes extends React.Component {
   LoadData(e){
-    var data = e.target.getAttribute('data');
-    data = JSON.parse(data);
+    const data = JSON.parse(e.target.getAttribute('data'));
 
     console.log("Editing:", data.id);
     
-    this.refs.edit.LoadForm(data);
+    this.editElm.LoadForm(data);
   }
 
   render() {
@@ -35,8 +30,8 @@ export default class EditScenes extends React.Component {
         <Grid>
           <Row>
             <Col xs={12}>
-              <SceneList onEdit={this.LoadData.bind(this)} ref="list" />
-              <Scene ref="edit" />
+              <SceneList onEdit={e => this.LoadData(e)} />
+              <Scene ref={e => this.editElm = e} />
             </Col>
           </Row>
         </Grid>

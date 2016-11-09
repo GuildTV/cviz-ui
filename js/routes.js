@@ -1,5 +1,5 @@
 import React from 'react';
-import { IndexRoute, Route } from 'react-router';
+import { Route } from 'react-router';
 
 import EditScenes from './components/EditScenes';
 import Dashboard from './components/Dashboard';

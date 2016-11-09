@@ -4,8 +4,7 @@
 
 import React from 'react';
 import {
-  Grid, Row, Col,
-  Tabs, Tab
+  Grid, Row, Col
 } from 'react-bootstrap';
 
 import SceneList from './SceneList';
@@ -14,7 +13,7 @@ import Footer from './Footer';
 /*
 * Variables
 */
-var bodyStyle = {
+const bodyStyle = {
   overflowY: "scroll",
   height: "calc(100vh - 72px - 200px)"
 };

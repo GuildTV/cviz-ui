@@ -21,7 +21,9 @@ const DeleteSceneKey = "deleteScene";
 export default class SceneList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {scenes: []}
+    this.state = {
+      scenes: []
+    };
   }
 
   handelInitialData(scenes) {
@@ -33,7 +35,7 @@ export default class SceneList extends React.Component {
 
     const scenes = this.state.scenes;
     newData.map(scene => {
-      var index = scenes.findIndex(s => s.id == scene.id);
+      const index = scenes.findIndex(s => s.id == scene.id);
       if(index >= 0)
         scenes[index] = scene;
       else  
@@ -49,7 +51,7 @@ export default class SceneList extends React.Component {
   }
 
   componentDidMount() {
-    this.refs.sock.socket.emit(GetSceneKey)
+    this.sock.socket.emit(GetSceneKey);
   }
 
   render() {
@@ -69,7 +71,7 @@ export default class SceneList extends React.Component {
 
     return (
       <div>
-        <Socket.Event name={ GetSceneKey } callback={e => this.handelInitialData(e)} ref="sock"/>
+        <Socket.Event name={ GetSceneKey } callback={e => this.handelInitialData(e)} ref={e => this.sock = e} />
         <Socket.Event name={ UpdateSceneKey } callback={e => this.handleStateChange(e)} />
         <Socket.Event name={ DeleteSceneKey } callback={e => this.handleDelete(e)} />
         <Table>

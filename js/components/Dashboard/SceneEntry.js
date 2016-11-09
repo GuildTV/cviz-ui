@@ -5,8 +5,7 @@
 import React from 'react';
 import {
   Col,
-  Input, Button,
-  Popover, OverlayTrigger
+  Button
 } from 'react-bootstrap';
 
 /*
@@ -18,16 +17,11 @@ const RunTemplateKey = "runTemplate";
 * React
 */
 
-const overlayCss = {
-  marginTop: "72px",
-  textAlign: "center"
-}
-
 export default class SceneEntry extends React.Component {
-  runTemplate(e){
+  runTemplate(){
     console.log("Running template:", this.props.data.template);
 
-    this.props.refs.sock.socket.emit(RunTemplateKey, {
+    this.props.sock.socket.emit(RunTemplateKey, {
       template: this.props.data.template,
       data: this.props.data,
       dataId: this.props.data.name
@@ -38,7 +32,7 @@ export default class SceneEntry extends React.Component {
     return (
       <Col md={4} sm={6} xs={12} style={{ textAlign: "center" }}>
         <p>
-          <Button onClick={this.runTemplate.bind(this)}>
+          <Button onClick={e => this.runTemplate(e)}>
             { this.props.data.name } ({ this.props.data.template })
           </Button>
         </p>
