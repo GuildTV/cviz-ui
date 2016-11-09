@@ -18,6 +18,10 @@ export default function(sequelize, DataTypes) {
     order: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    colour: {
+      type: DataTypes.STRING(7),
+      allowNull: true,
     }
   }, {
     classMethods:{

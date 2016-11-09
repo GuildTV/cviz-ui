@@ -4,6 +4,7 @@
 
 import React from 'react';
 import Socket from 'react-socket';
+import ColorPicker from 'react-color';
 
 import { Input, Button } from 'react-bootstrap';
 
@@ -106,6 +107,8 @@ export default class Scene extends React.Component {
     e.preventDefault();
 
     const {name, template, id, SceneData, order} = this.state;
+    const colour = this.colourPicker.state.hex;
+    console.log(colour, this.colourPicker.state);
 
     if (!name || !template) {
       //todo error handling
@@ -127,7 +130,8 @@ export default class Scene extends React.Component {
       name,
       template,
       SceneData,
-      order
+      order,
+      colour
     };
 
     this.sock.socket.emit(SaveSceneKey, compiledData);
@@ -194,6 +198,10 @@ export default class Scene extends React.Component {
 
             <Input type="number" label="Order" min="0" labelClassName="col-xs-2" wrapperClassName="col-xs-10"
               onChange={e => this.handleOrderChange(e)} value={this.state.order} />
+
+            <Input label="Button Colour" labelClassName="col-xs-2" wrapperClassName="col-xs-10">
+              <ColorPicker ref={e => this.colourPicker = e} type="chrome" color={this.state.colour || "#ffffff"} />
+            </Input>
 
             { dataFields }
            

@@ -31,6 +31,7 @@
     "promise-map-series": "^0.2.2",
     "react": "^0.14.0",
     "react-bootstrap": "^0.28.2",
+    "react-color": "^2.4.2",
     "react-dom": "^0.14.0",
     "react-router": "^1.0.2",
     "react-socket": "^0.1.4",

@@ -44,6 +44,9 @@ export default function(Models, socket){
                 transaction: t
               });
             });
+          }).then(() => {
+            Object.assign(scene, data);
+            return scene.save();
           });
         });
       }).then(() => {
