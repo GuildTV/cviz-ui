@@ -3,20 +3,11 @@
 */
 
 import React from 'react';
-import Socket from 'react-socket';
-import base64 from 'base-64';
 import {
   Grid, Row, Col,
-  Table
+  Table, Button
 } from 'react-bootstrap';
-
-/*
-* Variables
-*/
-
-const GetSceneKey = "getScenes";
-const UpdateSceneKey = "updateScene";
-const DeleteSceneKey = "deleteScene";
+import axios from 'axios';
 
 /*
 * React
@@ -29,51 +20,37 @@ export class EditSceneList extends React.Component {
     };
   }
 
-  handelInitialData(scenes) {
-    this.setState({ scenes });
-  }
-
-  handleStateChange(newData) {
-    console.log("SCENES", newData);
-
-    const scenes = this.state.scenes;
-    newData.map(scene => {
-      const index = scenes.findIndex(s => s.id == scene.id);
-      if(index >= 0)
-        scenes[index] = scene;
-      else  
-        scenes.push(scene);
-    });
-
-    this.setState({scenes});
-  }
-
-  handleDelete(id){
-    const scenes = this.state.scenes.filter(s => s.id != id);
-    this.setState({ scenes });
-  }
-
   componentDidMount() {
-    this.sock.socket.emit(GetSceneKey);
+    this.updateData();
+  }
+
+  componentWillUnmount(){
+    this.setState({ scenes: [] });
+  }
+
+  updateData(){
+    axios.get('/api/scenes')
+    .then(res => {
+      this.setState({ scenes: res.data || [] });
+      console.log("Loaded " + res.data.length + " scenes");
+    })
+    .catch(err => {
+      this.setState({ scenes: [] });
+      alert("Get scenes error:", err);
+    });
   }
 
   render() {
     const rows = this.state.scenes.map((scene) => {
-      console.log(scene);
-      const editData = base64.encode(JSON.stringify(scene));
-      const cloneRaw = Object.assign({}, scene);
-      delete cloneRaw.id;
-      const cloneData = base64.encode(JSON.stringify(cloneRaw));
-
       return (
-        <tr key={ scene.name }>
+        <tr key={ JSON.stringify(scene) }>
           <td>{ scene.name }</td>
           <td>{ scene.template }</td>
           <td>{ (scene.SceneData || []).length }</td>
           <td>{ scene.order }</td>
           <td>
-            <a className="btn btn-primary" href={`#/scenes/edit/${editData}`}>Edit</a>&nbsp;
-            <a className="btn btn-warning" href={`#/scenes/edit/${cloneData}`}>Clone</a>
+            <a className="btn btn-primary" href={`#/scenes/edit/${scene.id}`}>Edit</a>&nbsp;
+            <a className="btn btn-warning" href={`#/scenes/clone/${scene.id}`}>Clone</a>
           </td>
         </tr>
       );
@@ -84,12 +61,10 @@ export class EditSceneList extends React.Component {
         <Grid>
           <Row>
             <Col xs={12}>
-              <Socket.Event name={ GetSceneKey } callback={e => this.handelInitialData(e)} ref={e => this.sock = e} />
-              <Socket.Event name={ UpdateSceneKey } callback={e => this.handleStateChange(e)} />
-              <Socket.Event name={ DeleteSceneKey } callback={e => this.handleDelete(e)} />
               <h2>
                 Scenes&nbsp;&nbsp;
-                <a className="btn btn-success" href="#/scenes/edit/==">Create</a>
+                <a className="btn btn-primary" href="#/scenes/create">Create</a>&nbsp;
+                <Button bsStyle="success" onClick={() => this.updateData()}>Refresh</Button>
               </h2>
               <Table>
                 <thead>

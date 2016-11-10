@@ -36,6 +36,7 @@ export default class TopBar extends React.Component {
   }
 
   render() {
+    // <MenuItem eventKey={1.2} href="#/playlist">Playlist</MenuItem>
     return (
       <Navbar inverse>
         <Socket.Socket />
@@ -50,7 +51,6 @@ export default class TopBar extends React.Component {
           <Nav pullRight>
             <NavDropdown eventKey={1} title="Pages" id="basic-nav-dropdown">
               <MenuItem eventKey={1.1} href="#">Dashboard</MenuItem>
-              <MenuItem eventKey={1.2} href="#/playlist">Playlist</MenuItem>
               <MenuItem eventKey={1.3} href="#/scenes">Scenes</MenuItem>
             </NavDropdown>
           </Nav>

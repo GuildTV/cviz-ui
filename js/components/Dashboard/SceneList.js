@@ -27,6 +27,10 @@ export default class SceneList extends React.Component {
     this.updateData();
   }
 
+  componentWillUnmount(){
+    this.setState({ scenes: [] });
+  }
+
   updateData(){
     axios.get('/api/scenes')
     .then(res => {

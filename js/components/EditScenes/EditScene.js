@@ -5,7 +5,7 @@
 import React from 'react';
 import Socket from 'react-socket';
 import ColorPicker from 'react-color';
-import base64 from 'base-64';
+import axios from 'axios';
 import {
   Grid, Row, Col,
   Input, Button
@@ -16,12 +16,18 @@ import {
 */
 
 const SaveSceneKey = "updateScene";
-const DeleteSceneKey = "deleteScene";
-const UpdateSceneKey = "updateScene";
 
 const ValuePlaceholderText = "<templateData><componentData id=\"data\"><![CDATA[{\"json\":\"data here\"}]]></componentData></templateData>\n\n"
                            + "OR\n\n"
                            + "<templateData><componentData id=\"f0\"><data id=\"text\" value=\"NAME HERE\" /></componentData></templateData>";
+
+const newScene = {
+        id: undefined,
+        name: '', 
+        template: '', 
+        SceneData: [],
+        order: 9
+      };
 
 /*
 * React
@@ -30,43 +36,34 @@ export class EditScene extends React.Component {
   constructor(props) {
     super(props);
 
-    const parsed = this.parseProps(props);
-    console.log(parsed);
-    if (parsed === false)
-      this.state = {
-        id: undefined,
-        name: '', 
-        template: '', 
-        SceneData: [],
-        order: 9
-      };
-    else
-      this.state = parsed;
+    this.state = Object.assign({}, newScene);
+  }
+
+  componentWillMount(){
+    this.updateData();
   }
 
   componentWillUnmount(){
-    this.setState({});
+    this.setState(Object.assign({}, newScene));
   }
 
-  componentWillReceiveProps(newProps){
-    const parsed = this.parseProps(newProps);
-    console.log(parsed);
-    if (parsed !== false)
-      this.setState(parsed);
-  }
+  updateData(){
+    const id = this.props.params.id;
 
-  parseProps(props){
-    const { data } = props.params;
-    if (!data)
-      return false;
-
-    try {
-      const decoded = base64.decode(data);
-      return JSON.parse(decoded);
-
-    } catch (e) {
-      return false;
+    if (!id) {
+      console.log("Update no id");
+      return this.setState(Object.assign({}, newScene));
     }
+
+    axios.get(`/api/scenes/${id}`)
+    .then(res => {
+      this.setState(res.data || {});
+      console.log("Loaded scene data:" + res.data);
+    })
+    .catch(err => {
+      this.setState(Object.assign({}, newScene));
+      alert("Get scenes error: " + err);
+    });
   }
 
   DoDelete(){
@@ -75,7 +72,8 @@ export class EditScene extends React.Component {
     if (!id)
       return;
 
-    this.sock.socket.emit(DeleteSceneKey, { id });
+    axios.delete(`/api/scenes/${id}`)
+      .catch(err => alert("Delete error: " + err));
 
     this.props.history.pushState(null, "/scenes");
   }
@@ -191,21 +189,6 @@ export class EditScene extends React.Component {
     this.setState({ SceneData });
   }
 
-  handleSceneDelete(e){
-    if (e.id !== this.state.id)
-      return;
-
-    this.props.history.pushState(null, "/scenes");
-  }
-
-  handleSceneChange(e){
-    if (e.id !== this.state.id)
-      return;
-
-    // const data = base64.encode(JSON.stringify(e));
-    // this.props.history.pushState(null, "/scenes/edit/" + data)
-  }
-
   render() {
     const dataFields = (this.state.SceneData || []).map((d, i) => (<div key={i}>
         <hr />
@@ -221,8 +204,6 @@ export class EditScene extends React.Component {
           <Row>
             <Col xs={12}>
               <Socket.Event name={ SaveSceneKey } callback={() => {}} ref={e => this.sock = e} />
-              <Socket.Event name={ UpdateSceneKey } callback={e => this.handleSceneChange(e)} />
-              <Socket.Event name={ DeleteSceneKey } callback={e => this.handleSceneDelete(e)} />
 
               <form className="form-horizontal" onSubmit={e => this.handleSubmit(e)}>
                 <fieldset>

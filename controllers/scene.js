@@ -8,43 +8,33 @@ export function setup(Models, app){
       include: [ SceneData ]
     }).then(scenes => res.send(scenes));
   });
-  // app.post('/playlist/previous', function(req, res){
-  //   Scene.orderBy({ index: thinky.r.asc("order") }).run().then(function(data){
-  //     const index = data.findIndex(e => e.id == queuedId);
-  //     const newIndex = index<0 ? 0 : (index == 0 ? data.length-1 : index-1);
+  app.get('/api/scenes/:id', (req, res) => {
+    if (!req.params.id)
+      return res.status(404).send("");
 
-  //     queuedId = data[newIndex].id;
-  //     io.emit('getQueued', data[newIndex]);
-  //     res.send(data[newIndex]);
-  //   });
-  // });
+    Scene.findById(req.params.id, {
+      include: [ SceneData ]
+    }).then(scene => {
+      if (!scene)
+        return res.status(404).send("");
 
-  // app.post('/scene/go', function(req, res){
-  //   goTemplate();
-  //   io.emit('apiGoScene');
-  //   res.send("OK");
-  // });
-  // app.post('/scene/kill', function(req, res){
-  //   killTemplate();
-  //   io.emit('apiKillScene');
-  //   res.send("OK");
-  // });
-  // app.post('/scene/run', function(req, res){
-  //   Scene.filter({id: queuedId}).run().then(function(data) {
-  //     if(!data || data.length == 0)
-  //       return res.send("No template selected");
+      res.send(scene);
+    })
+    .catch(err => res.status(500).send(err));
+  });
+  app.delete('/api/scenes/:id', (req, res) => {
+    if (!req.params.id)
+      return res.status(404).send("");
 
-  //     const compiled = {
-  //       data: data[0],
-  //       template: data[0].template,
-  //       dataId: data[0].name
-  //     };
+    Scene.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
+    .catch(err => res.status(500).send(err));
 
-  //     runTemplate(compiled);
-  //     io.emit('apiRunScene');
-  //     res.send("OK");
-  //   });
-  // });
+    res.send("");
+  });
 
 }
 
@@ -113,18 +103,5 @@ export function bind(Models, socket){
     }).catch(err => console.log("Error saving new scene:", err));
   });
 
-  socket.on('getScenes', () => {
-    Scene.findAll({
-      include: [ SceneData ]
-    }).then(data => {
-      socket.emit('getScenes', data);
-    }).catch(error => console.log("Error getting people:", error));
-  });
-
-  socket.on('deleteScene', (data) => {
-    Scene.findById(data.id).then(data => {
-      return data.destroy().then(() => socket.emit('deleteScene', data.id));
-    }).catch(error => console.log("Error deleting scene:", error));
-  });
 
 }
