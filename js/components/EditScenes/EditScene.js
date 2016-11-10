@@ -36,32 +36,47 @@ export class EditScene extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = Object.assign({}, newScene);
+    this.state = Object.assign({
+      _mode: props.params.mode || "create"
+    }, newScene);
   }
 
   componentWillMount(){
-    this.updateData();
+    this.loadData();
   }
 
   componentWillUnmount(){
-    this.setState(Object.assign({}, newScene));
+    this.setState(Object.assign({
+      _mode: this.state._mode
+    }, newScene));
   }
 
-  updateData(){
+  loadData(){
     const id = this.props.params.id;
 
     if (!id) {
       console.log("Update no id");
-      return this.setState(Object.assign({}, newScene));
+      return this.setState(Object.assign({
+        _mode: this.state._mode
+      }, newScene));
     }
 
     axios.get(`/api/scenes/${id}`)
     .then(res => {
-      this.setState(res.data || {});
-      console.log("Loaded scene data:" + res.data);
+      const data = Object.assign({
+        _mode: this.state._mode
+      }, res.data || {});
+
+      if (this.state._mode == "clone")
+        delete data.id;
+
+      this.setState(data);
+      console.log("Loaded scene data:" + res.data.id);
     })
     .catch(err => {
-      this.setState(Object.assign({}, newScene));
+      this.setState(Object.assign({
+        _mode: this.state._mode
+      }, newScene));
       alert("Get scenes error: " + err);
     });
   }
