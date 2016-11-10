@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 
 import { webui_port } from "./config";
 
-import { setup as sceneSetup, bind as sceneBind } from './controllers/scene';
+import sceneSetup from './controllers/scene';
 import templateController from './controllers/template';
 // import { setup as queueSetup, bind as queueBind } from './controllers/queued';
 
@@ -20,6 +20,7 @@ const server = app.listen(webui_port, () => {
 const io = require('socket.io')(server);
 
 app.use(bodyParser.urlencoded({ extended: false } ));
+app.use(bodyParser.json());
 app.use(express.static('static'));
 
 // queueSetup(Models, app, io);
@@ -32,8 +33,6 @@ io.sockets.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
-
-  sceneBind(Models, socket);
 
   templateController(Models, socket);
   // queueBind(Models, socket);

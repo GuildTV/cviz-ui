@@ -3,7 +3,6 @@
 */
 
 import React from 'react';
-import Socket from 'react-socket';
 import ColorPicker from 'react-color';
 import axios from 'axios';
 import {
@@ -14,8 +13,6 @@ import {
 /*
 * Variables
 */
-
-const SaveSceneKey = "updateScene";
 
 const ValuePlaceholderText = "<templateData><componentData id=\"data\"><![CDATA[{\"json\":\"data here\"}]]></componentData></templateData>\n\n"
                            + "OR\n\n"
@@ -134,8 +131,6 @@ export class EditScene extends React.Component {
   }
 
   handleSubmit(e) {
-    console.log(this.state);
-
     e.preventDefault();
 
     const {name, template, id, SceneData, order} = this.state;
@@ -165,9 +160,12 @@ export class EditScene extends React.Component {
       colour
     };
 
-    this.sock.socket.emit(SaveSceneKey, compiledData);
+    const method = id ? axios.post : axios.put;
+    const url = id ? "/api/scenes/" + id : "/api/scenes";
 
-    this.props.history.pushState(null, "/scenes");
+    method(url, compiledData)
+      .then(() => this.props.history.pushState(null, "/scenes"))
+      .catch(err => alert("Save error: " + err));
   }
 
   AddData(){
@@ -218,8 +216,6 @@ export class EditScene extends React.Component {
         <Grid>
           <Row>
             <Col xs={12}>
-              <Socket.Event name={ SaveSceneKey } callback={() => {}} ref={e => this.sock = e} />
-
               <form className="form-horizontal" onSubmit={e => this.handleSubmit(e)}>
                 <fieldset>
                   <legend>
