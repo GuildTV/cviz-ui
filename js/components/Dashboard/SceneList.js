@@ -8,8 +8,14 @@ import {
   Input, Button,
 } from 'react-bootstrap';
 import axios from 'axios';
+import Socket from 'react-socket';
 
 import SceneEntry from './SceneEntry';
+
+/*
+* Variables
+*/
+const RunTemplateKey = "runTemplate";
 
 /*
 * React
@@ -47,13 +53,20 @@ export default class SceneList extends React.Component {
     this.setState({ filter: e.target.value });
   }
 
+  runTemplate(data) {
+    this.sock.socket.emit(RunTemplateKey, data);
+  }
+
   render() {
-    const sceneList = this.state.scenes
-      .filter((p) => SceneList.filterList(this.state.filter, p))
-      .map((p) => <SceneEntry key={p.id} sock={this.sock} parent={this} data={p} />);
+    const scenes = this.state.scenes
+      .filter((p) => SceneList.filterList(this.state.filter, p));
+    scenes.sort(SceneEntry.sortScenes);
+    const sceneList = scenes.map((p) => <SceneEntry key={p.id} sock={this.sock} parent={this} runTemplate={d => this.runTemplate(d)} data={p} />);
 
     return (
       <div>
+        <Socket.Event name={ RunTemplateKey } callback={() => {}} ref={e => this.sock = e} />
+
         <form className="form-horizontal">
           <Input label="Search:" labelClassName="col-xs-2" wrapperClassName="col-xs-10">
             <Row>

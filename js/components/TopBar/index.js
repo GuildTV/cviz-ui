@@ -12,35 +12,15 @@ import {
 } from 'react-bootstrap';
 
 /*
-* Variables
-*/
-const RunTemplateKey = "runTemplate";
-
-/*
 * React
 */
 export default class TopBar extends React.Component {
-
-  runTemplate(e){
-    let target = e.target;
-    if(!e.target.hasAttribute('data-id'))
-      target = target.parentElement;
-
-    console.log("Running template:", target.getAttribute('data-id'));
-
-    this.sock.socket.emit(RunTemplateKey, {
-      template: target.getAttribute('data-id'),
-      data: target.getAttribute('data-data'),
-      dataId: target.getAttribute('data-key')
-    });
-  }
 
   render() {
     // <MenuItem eventKey={1.2} href="#/playlist">Playlist</MenuItem>
     return (
       <Navbar inverse>
         <Socket.Socket />
-        <Socket.Event name="test" ref={e => this.sock = e} />
         <Navbar.Header>
           <Navbar.Brand>
             <a href="#">C-Viz WebUI</a>

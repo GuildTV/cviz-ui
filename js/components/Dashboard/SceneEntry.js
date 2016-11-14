@@ -3,16 +3,10 @@
 */
 
 import React from 'react';
-import Socket from 'react-socket';
 import {
   Col,
   Button
 } from 'react-bootstrap';
-
-/*
-* Variables
-*/
-const RunTemplateKey = "runTemplate";
 
 /*
 * React
@@ -23,7 +17,7 @@ export default class SceneEntry extends React.Component {
     const { data } = this.props;
     console.log("Running template:", data.template);
 
-    this.sock.socket.emit(RunTemplateKey, {
+    this.props.runTemplate({
       template: data.template,
       data: data,
       dataId: data.name
@@ -36,7 +30,6 @@ export default class SceneEntry extends React.Component {
 
     return (
       <Col md={4} sm={6} xs={12} style={{ textAlign: "center" }}>
-        <Socket.Event name={ RunTemplateKey } callback={() => {}} ref={e => this.sock = e} />
         <p>
           <Button onClick={e => this.runTemplate(e)} style={style}>
             <span style={{mixBlendMode: "difference", color: "white", fontWeight: "bold"}}>
@@ -46,5 +39,19 @@ export default class SceneEntry extends React.Component {
         </p>
       </Col>
     );
+  }
+
+  static sortScenes(a, b){
+    if (a.order < b.order)
+      return -1;
+    if (a.order > b.order)
+      return 1;
+
+    if (a.name < b.name)
+      return -1;
+    if (a.name > b.name)
+      return 1;
+
+    return 0;
   }
 }
