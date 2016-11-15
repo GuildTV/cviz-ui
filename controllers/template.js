@@ -1,8 +1,7 @@
 import net from 'net';
 
-import { cvizHost, cvizPort } from "../config";
+import { cvizHost, cvizPort, cvizTemplateId } from "../config";
 
-let lastState = {};
 let pingInterval = null;
 
 const client = new net.Socket();
@@ -23,20 +22,11 @@ client.connect(cvizPort, cvizHost, function() {
   console.log('Connected to cviz');
 
   pingInterval = setInterval(() => {
-    client.write("{}");
+    client.write(JSON.stringify({
+      type: "ping",
+      ping: Date.now()
+    }));
   }, 300);
-});
-
-client.on('data', (data) => {
-  try {
-    if(data == "{}")
-      return;
-
-    lastState = JSON.parse(data);
-    console.log("Received", lastState);
-  } catch (e){
-    console.log("CViz read error:", e);
-  }
 });
 
 client.on('close', () => {
@@ -48,16 +38,31 @@ client.on('close', () => {
 });
 
 export default function(Models, socket){
-  socket.emit('templateState', lastState);
-  
   client.on('data', (data) => {
     try {
-      if(data == "{}")
-        return;
-
       data = JSON.parse(data);
+      switch (data.type){
+        case "ping":
+          break;
+        case "state":
+          if (!data.state || data.state.length == 0)
+            break;
 
-      socket.emit('templateState', data);
+          const state = data.state.find(e => e.timelineId == cvizTemplateId);
+          if (state)
+            socket.emit("templateState", state);
+
+          break;
+        case "timelines":
+          socket.emit('templateList', data.timelines);
+          break;
+        case "channels":
+          socket.emit("channelList", data.channels);
+          break;
+        default:
+          console.log("CViz: Unknown response type:", data.type);
+      }
+
     } catch (e){
       console.log("CViz read error:", e);
     }
@@ -68,6 +73,9 @@ export default function(Models, socket){
   socket.on('templateGo', goTemplate);
 
   socket.on('templateKill', killTemplate);
+
+  socket.on('templateList', templateList);
+  socket.on('channelList', channelList);
 }
 
 export function runTemplate (data){
@@ -83,10 +91,13 @@ export function runTemplate (data){
   }
 
   client.write(JSON.stringify({
-    type: "LOAD",
-    filename: data.template,
-    templateData: templateData,
-    templateDataId: data.dataId
+    type: "action",
+    action: {
+      type: "LOAD",
+      filename: data.template,
+      templateData: templateData,
+      templateDataId: data.dataId
+    }
   }));
 }
 
@@ -94,7 +105,10 @@ export function goTemplate (){
   console.log("templateGo");
 
   client.write(JSON.stringify({
-    type: "CUE"
+    type: "action",
+    action: {
+      type: "CUE"
+    }
   }));
 }
 
@@ -102,6 +116,25 @@ export function killTemplate(){
   console.log("templateKill");
 
   client.write(JSON.stringify({
-    type: "KILL"
+    type: "action",
+    action: {
+      type: "KILL"
+    }
+  }));
+}
+
+function templateList (){
+  console.log("templateList");
+
+  client.write(JSON.stringify({
+    type: "timelines"
+  }));
+}
+
+function channelList (){
+  console.log("channelList");
+
+  client.write(JSON.stringify({
+    type: "channels"
   }));
 }
