@@ -55,11 +55,8 @@ export default function(Models, socket){
   
   client.pipe(JSONStream.parse()).on('data', (data) => {
     try {
-      if(data == "{}")
-        return;
-
       const stringData = JSON.stringify(data);
-      if (lastSentState == stringData)
+      if (lastSentState == stringData || stringData == "{}")
         return;
       lastSentState = stringData;
 
@@ -80,19 +77,19 @@ export function runTemplate (data){
   console.log("runTemplate", data);
 
   // not pretty, but data needs to be passed as an object of strings
-  const templateData = {};
+  const parameters = {};
 
   for(let k in data.data.SceneData) {
     const d = data.data.SceneData[k];
 
-    templateData[d.name] = d.value;
+    parameters[d.name] = d.value;
   }
 
   client.write(JSON.stringify({
     type: "LOAD",
-    filename: data.template,
-    templateData: templateData,
-    templateDataId: data.dataId
+    timelineFile: data.template,
+    instanceName: data.dataId,
+    parameters: parameters,
   }));
 }
 

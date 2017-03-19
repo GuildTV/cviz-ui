@@ -50,6 +50,7 @@ export default class Footer extends React.Component {
   }
 
   ChangeTemplateState(data){
+    console.log(data);
     if (data.state == "CLEAR"){
       this.setState({
         state: "CLEAR",
@@ -82,7 +83,7 @@ export default class Footer extends React.Component {
           <Row style={{ height: "100%" }}>
             <Col xs={10}>
               <h3>Active: { this.state.instanceName }</h3>
-              <h4>Template: { this.state.filename }</h4>
+              <h4>Template: { this.state.timelineFile }</h4>
               <h4>State: { this.state.state }</h4>
               <p><Button bsStyle="danger" onClick={() => this.KillButtonClick()}>Kill</Button></p>
             </Col>
