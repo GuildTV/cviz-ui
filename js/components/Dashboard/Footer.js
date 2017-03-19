@@ -44,13 +44,21 @@ export default class Footer extends React.Component {
 
     this.state = {
       state: "CLEAR",
-      dataId: "",
-      templateName: ""
+      filename: "",
+      instanceName: ""
     };
   }
 
   ChangeTemplateState(data){
-    this.setState(data);
+    if (data.state == "CLEAR"){
+      this.setState({
+        state: "CLEAR",
+        filename: "",
+        instanceName: ""
+      });
+    } else {
+      this.setState(data);
+    }
   }
 
   KillButtonClick(){
@@ -73,8 +81,9 @@ export default class Footer extends React.Component {
         <Grid style={{ height: "100%" }}>
           <Row style={{ height: "100%" }}>
             <Col xs={10}>
-              <h3>Active: { this.state.dataId }</h3>
-              <h4>Template: { this.state.templateName }</h4>
+              <h3>Active: { this.state.instanceName }</h3>
+              <h4>Template: { this.state.filename }</h4>
+              <h4>State: { this.state.state }</h4>
               <p><Button bsStyle="danger" onClick={() => this.KillButtonClick()}>Kill</Button></p>
             </Col>
             <Col xs={2} style={{ height: "100%" }}>

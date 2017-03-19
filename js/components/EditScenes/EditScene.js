@@ -142,14 +142,14 @@ export class EditScene extends React.Component {
       return;
     }
 
-    for(let dataset of SceneData){
-      const err = this.validateScene(dataset);
-      if (err === true)
-        continue;
+    // for(let dataset of SceneData){
+    //   const err = this.validateScene(dataset);
+    //   if (err === true)
+    //     continue;
 
-      alert(err);
-      return;
-    }
+    //   alert(err);
+    //   return;
+    // }
 
     const compiledData = {
       id,
@@ -172,6 +172,7 @@ export class EditScene extends React.Component {
     const SceneData = this.state.SceneData || [];
     SceneData.push({
       id: undefined,
+      id2: Math.random(),
       name: "",
       value: ""
     });
@@ -180,10 +181,11 @@ export class EditScene extends React.Component {
 
   handleDatasetNameChange(e){
     const id = e.target.getAttribute('data-id');
+    const id2 = e.target.getAttribute('data-id2');
     const SceneData = this.state.SceneData;
     
     for(let i=0; i<SceneData.length; i++){
-      if(SceneData[i].id == id)
+      if(SceneData[i].id == id && SceneData[i].id2 == id2)
         SceneData[i].name = e.target.value;
     }
 
@@ -192,10 +194,11 @@ export class EditScene extends React.Component {
 
   handleDatasetValueChange(e){
     const id = e.target.getAttribute('data-id');
+    const id2 = e.target.getAttribute('data-id2');
     const SceneData = this.state.SceneData;
     
     for(let i=0; i<SceneData.length; i++){
-      if(SceneData[i].id == id)
+      if(SceneData[i].id == id && SceneData[i].id2 == id2)
         SceneData[i].value = e.target.value;
     }
 
@@ -206,9 +209,9 @@ export class EditScene extends React.Component {
     const dataFields = (this.state.SceneData || []).map((d, i) => (<div key={i}>
         <hr />
         <Input type="text" label="Dataset Name" labelClassName="col-xs-2" wrapperClassName="col-xs-10" 
-          onChange={e => this.handleDatasetNameChange(e)} data-id={d.id} value={d.name} placeholder="Name used in cviz" />
+          onChange={e => this.handleDatasetNameChange(e)} data-id={d.id} data-id2={d.id2} value={d.name} placeholder="Name used in cviz" />
         <Input type="textarea" label="Value" labelClassName="col-xs-2" wrapperClassName="col-xs-10" rows={5} 
-          onChange={e => this.handleDatasetValueChange(e)} data-id={d.id} value={d.value} placeholder={ValuePlaceholderText} />
+          onChange={e => this.handleDatasetValueChange(e)} data-id={d.id} data-id2={d.id2} value={d.value} placeholder={ValuePlaceholderText} />
       </div>));
 
     return (

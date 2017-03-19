@@ -2,6 +2,8 @@ import net from 'net';
 
 import { cvizHost, cvizPort } from "../config";
 
+import JSONStream from 'JSONStream';
+
 let lastState = {};
 let pingInterval = null;
 
@@ -27,13 +29,13 @@ client.connect(cvizPort, cvizHost, function() {
   }, 300);
 });
 
-client.on('data', (data) => {
+client.pipe(JSONStream.parse()).on('data', (data) => {
   try {
     if(data == "{}")
       return;
 
-    lastState = JSON.parse(data);
-    console.log("Received", lastState);
+    lastState = data;
+    // console.log("Received", lastState);
   } catch (e){
     console.log("CViz read error:", e);
   }
@@ -49,13 +51,17 @@ client.on('close', () => {
 
 export default function(Models, socket){
   socket.emit('templateState', lastState);
+  let lastSentState = "";
   
-  client.on('data', (data) => {
+  client.pipe(JSONStream.parse()).on('data', (data) => {
     try {
       if(data == "{}")
         return;
 
-      data = JSON.parse(data);
+      const stringData = JSON.stringify(data);
+      if (lastSentState == stringData)
+        return;
+      lastSentState = stringData;
 
       socket.emit('templateState', data);
     } catch (e){
