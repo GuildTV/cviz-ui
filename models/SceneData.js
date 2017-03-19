@@ -16,6 +16,11 @@ export default function(sequelize, DataTypes) {
       allowNull: false,
     },
 
+    type: {
+      type: DataTypes.ENUM("text", "xml"),
+      allowNull: false,
+    },
+
     value: {
       type: DataTypes.TEXT,
       allowNull: false,

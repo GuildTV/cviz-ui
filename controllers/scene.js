@@ -22,6 +22,22 @@ export default function(Models, app){
     })
     .catch(err => res.status(500).send(err));
   });
+  app.post('/api/scenes/bulk-delete', (req, res) => {
+    if (!req.body.ids)
+      return res.status(404).send("");
+
+    Scene.destroy({
+      where: {
+        id: { $in: req.body.ids }
+      }
+    })
+    .then(() => {
+      Scene.findAll({
+        include: [ SceneData ]
+      }).then(scenes => res.send(scenes));
+    })
+    .catch(err => res.status(500).send(err));
+  });
   app.delete('/api/scenes/:id', (req, res) => {
     if (!req.params.id)
       return res.status(404).send("");

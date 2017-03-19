@@ -26,6 +26,11 @@ module.exports = {
           allowNull: false
         },
 
+        type: {
+          type: Sequelize.ENUM("text", "xml"),
+          allowNull: false
+        },
+
         value: {
           type: Sequelize.TEXT,
           allowNull: false

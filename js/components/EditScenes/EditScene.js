@@ -64,8 +64,10 @@ export class EditScene extends React.Component {
         _mode: this.state._mode
       }, res.data || {});
 
-      if (this.state._mode == "clone")
+      if (this.state._mode == "clone"){
         delete data.id;
+        data.id2 = Math.random();
+      }
 
       this.setState(data);
       console.log("Loaded scene data:" + res.data.id);
@@ -168,11 +170,12 @@ export class EditScene extends React.Component {
       .catch(err => alert("Save error: " + err));
   }
 
-  AddData(){
+  AddData(type){
     const SceneData = this.state.SceneData || [];
     SceneData.push({
       id: undefined,
       id2: Math.random(),
+      type: type,
       name: "",
       value: ""
     });
@@ -205,13 +208,28 @@ export class EditScene extends React.Component {
     this.setState({ SceneData });
   }
 
+  handleDatasetRemove(id, id2){
+    const SceneData = this.state.SceneData.slice();
+    for(let i=0; i<SceneData.length; i++){
+      if(SceneData[i].id == id && SceneData[i].id2 == id2){
+        SceneData.splice(i,1);
+        break;
+      }
+    }
+
+    this.setState({ SceneData });
+  }
+
   render() {
     const dataFields = (this.state.SceneData || []).map((d, i) => (<div key={i}>
         <hr />
         <Input type="text" label="Dataset Name" labelClassName="col-xs-2" wrapperClassName="col-xs-10" 
           onChange={e => this.handleDatasetNameChange(e)} data-id={d.id} data-id2={d.id2} value={d.name} placeholder="Name used in cviz" />
-        <Input type="textarea" label="Value" labelClassName="col-xs-2" wrapperClassName="col-xs-10" rows={5} 
-          onChange={e => this.handleDatasetValueChange(e)} data-id={d.id} data-id2={d.id2} value={d.value} placeholder={ValuePlaceholderText} />
+        <Input type={d.type == "text" ? "text" : "textarea"} label="Value" labelClassName="col-xs-2" wrapperClassName="col-xs-10" rows={5} 
+          onChange={e => this.handleDatasetValueChange(e)} data-id={d.id} data-id2={d.id2} value={d.value} placeholder={d.type == "text" ? "" : ValuePlaceholderText} />
+        <Input label=" " labelClassName="col-xs-2" wrapperClassName="col-xs-10">
+          <Button bsStyle="warning" onClick={() => this.handleDatasetRemove(d.id, d.id2)}>Remove</Button>
+        </Input>
       </div>));
 
     return (
@@ -243,7 +261,8 @@ export class EditScene extends React.Component {
                  
                   <Input label=" " labelClassName="col-xs-2" wrapperClassName="col-xs-10">
                     <Button type="submit" bsStyle="primary">Save</Button>&nbsp;
-                    <Button bsStyle="info" onClick={() => this.AddData()}>Add dataset</Button>&nbsp;
+                    <Button bsStyle="info" onClick={() => this.AddData("text")}>Add text</Button>&nbsp;
+                    <Button bsStyle="info" onClick={() => this.AddData("xml")}>Add dataset</Button>&nbsp;
                     { this.state.id ? <Button bsStyle="danger" onClick={() => this.DoDelete()}>Delete</Button> : "" }
                   </Input>
                 </fieldset>
