@@ -43,9 +43,11 @@ export default class Footer extends React.Component {
     super(props);
 
     this.state = {
-      state: "CLEAR",
-      filename: "",
-      instanceName: ""
+      state: {
+        state: "CLEAR",
+        filename: "",
+        instanceName: ""
+      }
     };
   }
 
@@ -53,12 +55,14 @@ export default class Footer extends React.Component {
     console.log(data);
     if (data.state == "CLEAR"){
       this.setState({
-        state: "CLEAR",
-        filename: "",
-        instanceName: ""
+        state: {
+          state: "CLEAR",
+          filename: "",
+          instanceName: ""
+        }
       });
     } else {
-      this.setState(data);
+      this.setState({ state: data });
     }
   }
 
@@ -75,6 +79,7 @@ export default class Footer extends React.Component {
   }
 
   render() {
+    const { instanceName, timelineFile, state, stateMessage } = this.state.state;
     return (
       <footer style={footerCss}>
         <Socket.Event name={ ChangeTemplateStateKey } callback={e => this.ChangeTemplateState(e)} ref={e => this.sock = e} />
@@ -82,9 +87,9 @@ export default class Footer extends React.Component {
         <Grid style={{ height: "100%" }}>
           <Row style={{ height: "100%" }}>
             <Col xs={10}>
-              <h3>Active: { this.state.instanceName }</h3>
-              <h4>Template: { this.state.timelineFile }</h4>
-              <h4>State: { this.state.state }</h4>
+              <h3>Active: { instanceName }</h3>
+              <h4>Template: { timelineFile }</h4>
+              <h4>State: { state }{ stateMessage ? " - " + stateMessage : "" }</h4>
               <p><Button bsStyle="danger" onClick={() => this.KillButtonClick()}>Kill</Button></p>
             </Col>
             <Col xs={2} style={{ height: "100%" }}>
