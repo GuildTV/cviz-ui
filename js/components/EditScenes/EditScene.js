@@ -67,6 +67,10 @@ export class EditScene extends React.Component {
       if (this.state._mode == "clone"){
         delete data.id;
         data.id2 = Math.random();
+        for (let param of data.SceneData){
+          param.id2 = Math.random();
+          delete param.id;
+        }
       }
 
       this.setState(data);
