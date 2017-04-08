@@ -42,7 +42,8 @@
     "socket.io": "^1.4.5",
     "socket.io-client": "^1.4.5",
     "webpack": "^1.12.1",
-    "webpack-dev-server": "^1.12.1"
+    "webpack-dev-server": "^1.12.1",
+    "xmlbuilder": "^8.2.2"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.0",

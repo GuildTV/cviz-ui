@@ -9,14 +9,11 @@ import {
   Grid, Row, Col,
   Input, Button
 } from 'react-bootstrap';
+import { EditTemplateXml } from './EditTemplateXml';
 
 /*
 * Variables
 */
-
-const ValuePlaceholderText = "<templateData><componentData id=\"data\"><![CDATA[{\"json\":\"data here\"}]]></componentData></templateData>\n\n"
-                           + "OR\n\n"
-                           + "<templateData><componentData id=\"f0\"><data id=\"text\" value=\"NAME HERE\" /></componentData></templateData>";
 
 const newScene = {
         id: undefined,
@@ -212,6 +209,19 @@ export class EditScene extends React.Component {
     this.setState({ SceneData });
   }
 
+  handleXmlValueChange(dataset, xml){
+    const id = dataset.id;
+    const id2 = dataset.id2;
+    const SceneData = this.state.SceneData;
+    
+    for(let i=0; i<SceneData.length; i++){
+      if(SceneData[i].id == id && SceneData[i].id2 == id2)
+        SceneData[i].value = xml;
+    }
+
+    this.setState({ SceneData });
+  }
+
   handleDatasetRemove(id, id2){
     const SceneData = this.state.SceneData.slice();
     for(let i=0; i<SceneData.length; i++){
@@ -224,17 +234,34 @@ export class EditScene extends React.Component {
     this.setState({ SceneData });
   }
 
+  renderFieldContents(d, i){
+    switch(d.type){
+      case "xml":
+        return <EditTemplateXml value={d.value} onChange={x => this.handleXmlValueChange(d, x)} />
+      default:
+        return <Input type={d.type == "text" ? "text" : "textarea"} label="Value" labelClassName="col-xs-2" wrapperClassName="col-xs-10" rows={5} 
+          onChange={e => this.handleDatasetValueChange(e)} data-id={d.id} data-id2={d.id2} value={d.value} />
+    }
+  }
+
   render() {
-    const dataFields = (this.state.SceneData || []).map((d, i) => (<div key={i}>
+    const dataFields = (this.state.SceneData || []).map((d, i) => {
+      return <div key={d.id+" "+d.id2}>
         <hr />
-        <Input type="text" label="Dataset Name" labelClassName="col-xs-2" wrapperClassName="col-xs-10" 
-          onChange={e => this.handleDatasetNameChange(e)} data-id={d.id} data-id2={d.id2} value={d.name} placeholder="Name used in cviz" />
-        <Input type={d.type == "text" ? "text" : "textarea"} label="Value" labelClassName="col-xs-2" wrapperClassName="col-xs-10" rows={5} 
-          onChange={e => this.handleDatasetValueChange(e)} data-id={d.id} data-id2={d.id2} value={d.value} placeholder={d.type == "text" ? "" : ValuePlaceholderText} />
-        <Input label=" " labelClassName="col-xs-2" wrapperClassName="col-xs-10">
-          <Button bsStyle="warning" onClick={() => this.handleDatasetRemove(d.id, d.id2)}>Remove</Button>
+        <Input label="Dataset Name" labelClassName="col-xs-2" wrapperClassName="col-xs-10">
+          <Row>
+            <Col xs={10}>
+              <Input type="text" onChange={e => this.handleDatasetNameChange(e)} data-id={d.id} data-id2={d.id2} value={d.name} placeholder="Name used in cviz" />
+            </Col>
+            <Col xs={2}>
+              <Button bsStyle="warning" onClick={() => this.handleDatasetRemove(d.id, d.id2)}>Remove</Button>
+            </Col>
+          </Row>
         </Input>
-      </div>));
+
+        { this.renderFieldContents(d, i) }
+      </div>;
+    });
 
     return (
       <div>
