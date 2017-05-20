@@ -59,9 +59,21 @@ export default class Dashboard extends React.Component {
       return <div>Loading...</div>;
 
     if (settings.mode == "playlist")
-      return <Playlist id={this.props.params.id} />;
+      return (
+        <Col xs={12}>
+          <Playlist id={this.props.params.id} />;
+        </Col>
+      );
 
-    return <SceneList id={this.props.params.id} />;
+    return (
+      <Grid>
+        <Row>
+          <Col xs={12}>
+            <SceneList id={this.props.params.id} />;
+          </Col>
+        </Row>
+      </Grid>
+    );
   }
 
   render() {
@@ -72,13 +84,7 @@ export default class Dashboard extends React.Component {
     return (
       <div>
         <div style={bodyStyle}>
-          <Grid>
-            <Row>
-              <Col xs={12}>
-                { this.renderContent() }
-              </Col>
-            </Row>
-          </Grid>
+          { this.renderContent() }
         </div>
         { this.showFooter() ? <Footer /> : "" }
       </div>
