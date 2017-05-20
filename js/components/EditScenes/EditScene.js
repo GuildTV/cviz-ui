@@ -234,18 +234,18 @@ export class EditScene extends React.Component {
     this.setState({ SceneData });
   }
 
-  renderFieldContents(d, i){
+  renderFieldContents(d){
     switch(d.type){
       case "xml":
-        return <EditTemplateXml value={d.value} onChange={x => this.handleXmlValueChange(d, x)} />
+        return <EditTemplateXml value={d.value} onChange={x => this.handleXmlValueChange(d, x)} />;
       default:
         return <Input type={d.type == "text" ? "text" : "textarea"} label="Value" labelClassName="col-xs-2" wrapperClassName="col-xs-10" rows={5} 
-          onChange={e => this.handleDatasetValueChange(e)} data-id={d.id} data-id2={d.id2} value={d.value} />
+          onChange={e => this.handleDatasetValueChange(e)} data-id={d.id} data-id2={d.id2} value={d.value} />;
     }
   }
 
   render() {
-    const dataFields = (this.state.SceneData || []).map((d, i) => {
+    const dataFields = (this.state.SceneData || []).map((d) => {
       return <div key={d.id+" "+d.id2}>
         <hr />
         <Input label="Dataset Name" labelClassName="col-xs-2" wrapperClassName="col-xs-10">
@@ -259,7 +259,7 @@ export class EditScene extends React.Component {
           </Row>
         </Input>
 
-        { this.renderFieldContents(d, i) }
+        { this.renderFieldContents(d) }
       </div>;
     });
 

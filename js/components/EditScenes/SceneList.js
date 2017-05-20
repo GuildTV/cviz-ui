@@ -72,7 +72,7 @@ export class EditSceneList extends React.Component {
     const selectedScenes = this.state.selectedScenes.slice();
 
     if (e.target.checked) {
-      selectedScenes.push(id)
+      selectedScenes.push(id);
     } else {
       for(let i=0; i<selectedScenes.length; i++){
         if(selectedScenes[i] == id){

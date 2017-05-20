@@ -21,7 +21,7 @@ const server = app.listen(webui_port, () => {
 const io = require('socket.io')(server);
 
 // Setup nunjucks templating engine
-const env = nunjucks.configure(app.get('views'), {
+nunjucks.configure(app.get('views'), {
     noCache: true,
     watch: true,
     express: app

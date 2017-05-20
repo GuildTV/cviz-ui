@@ -13,15 +13,10 @@ import keydown from 'react-keydown';
 /*
 * Variables
 */
-// const GetQueuedKey = "getQueued";
-// const ApiGoSceneKey = "apiGoScene";
-// const ApiRunSceneKey = "apiRunScene";
-// const ApiKillSceneKey = "apiKillScene";
 const ChangeTemplateStateKey = "templateState";
 const GoTemplateKey = "templateGo";
 const KillTemplateKey = "templateKill";
 const RunTemplateKey = "runTemplate";
-
 
 /*
 * React

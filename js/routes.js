@@ -2,7 +2,7 @@ import React from 'react';
 import { Route } from 'react-router';
 
 import { EditScene, EditSceneList } from './components/EditScenes';
-import { EditPlaylist, EditPlaylistList } from './components/EditPlaylists'
+import { EditPlaylist, EditPlaylistList } from './components/EditPlaylists';
 import Dashboard from './components/Dashboard';
 import Playlist from './components/Playlist';
 

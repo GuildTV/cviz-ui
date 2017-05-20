@@ -3,10 +3,8 @@
 */
 
 import React from 'react';
-import ColorPicker from 'react-color';
-import axios from 'axios';
 import {
-  Grid, Row, Col,
+  Row, Col,
   Input, Button
 } from 'react-bootstrap';
 import xmlBuilder from 'xmlbuilder';
@@ -16,7 +14,7 @@ export class EditTemplateXml extends React.Component {
   constructor(props) {
     super(props);
 
-    const fields = this.tryParseXml(props.value)
+    const fields = this.tryParseXml(props.value);
 
     this.state = {
       failedParse: fields == null,
@@ -62,7 +60,7 @@ export class EditTemplateXml extends React.Component {
     for (let i = 0; i < this.state.fields.length; i++) {
       const field = this.state.fields[i];
       const comp = components.ele('componentData', { id: field.name });  
-      comp.ele('data', { id: "text", value: field.value})
+      comp.ele('data', { id: "text", value: field.value});
     }
     
     return rootElm.end();
@@ -142,7 +140,7 @@ export class EditTemplateXml extends React.Component {
     this.ensureHasEmpty();
 
     if (typeof this.props.onChange == "function")
-      this.props.onChange(this.compileXml())
+      this.props.onChange(this.compileXml());
   }
 
 
@@ -168,7 +166,7 @@ export class EditTemplateXml extends React.Component {
     let hasEmptyName = false;
     const dataFields = (this.state.fields || []).map((d, i) => {
       hasEmptyName = hasEmptyName || d.name == "";
-      return this.renderField(d, i)
+      return this.renderField(d, i);
     });
 
     // if (!hasEmptyName)
