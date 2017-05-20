@@ -25,7 +25,6 @@ export default class Playlist extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: 0,
       data: null,
 
       state: {
@@ -48,7 +47,7 @@ export default class Playlist extends React.Component {
   }
 
   updateData(){
-    axios.get('/api/channel/' + this.state.id)
+    axios.get('/api/channel/' + this.props.id)
     .then(res => {
       this.setState({ data: res.data || null });
       console.log("Loaded playlist data");
@@ -93,7 +92,7 @@ export default class Playlist extends React.Component {
   @keydown( 188, 97, 100, 103 ) // <, nump/ad1, numpad4, numpad7
   prevTemplate( event ) {
     event.preventDefault();
-    axios.post('/api/channel/' + this.state.id + '/previous')
+    axios.post('/api/channel/' + this.props.id + '/previous')
     .then(res => {
       this.setState({ data: res.data || null });
       console.log("Previous playlist entry");
@@ -109,7 +108,7 @@ export default class Playlist extends React.Component {
     if (event)
       event.preventDefault();
     
-    axios.post('/api/channel/' + this.state.id + '/next')
+    axios.post('/api/channel/' + this.props.id + '/next')
     .then(res => {
       this.setState({ data: res.data || null });
       console.log("Next playlist entry");
@@ -159,7 +158,6 @@ export default class Playlist extends React.Component {
   ChangeTemplateState(data){
     this.updateData();
 
-    console.log(data);
     if (data.state == "CLEAR"){
       this.setState({
         state: {
@@ -181,12 +179,14 @@ export default class Playlist extends React.Component {
     const { nextScene, nextPos, length } = this.state.data;
     const { instanceName, timelineFile, state, stateMessage } = this.state.state;
 
+    const posStr = nextPos == length ? "" : "(" + (nextPos+1) + "/" + length + ")";
+
     return <div>
       <h1>{ instanceName ? instanceName : "Slot empty" }</h1>
       <h2>{ timelineFile ? "("+timelineFile+")" : "" }</h2>
       <h3>State: { state }{ stateMessage ? " - " + stateMessage : "" }</h3>
 
-      <h4>Next: ({ nextPos+1 }/{ length }) { nextScene ? nextScene.name + "(" + nextScene.template + ")" : " - " }</h4>
+      <h4>Next: { posStr } { nextScene ? nextScene.name + "(" + nextScene.template + ")" : " - " }</h4>
     </div>;
   }
 

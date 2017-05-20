@@ -49,7 +49,7 @@ client.on('close', () => {
   }
 });
 
-export default function(Models, socket){
+export default function(Models, channelState, socket){
   socket.emit('templateState', lastState);
   let lastSentState = "";
   

@@ -90,7 +90,7 @@ export class EditScene extends React.Component {
     axios.delete(`/api/scenes/${id}`)
       .catch(err => alert("Delete error: " + err));
 
-    this.props.history.pushState(null, "/scenes");
+    this.props.history.pushState(null, "/edit/scenes");
   }
 
   handleNameChange(e) {
@@ -167,7 +167,7 @@ export class EditScene extends React.Component {
     const url = id ? "/api/scenes/" + id : "/api/scenes";
 
     method(url, compiledData)
-      .then(() => this.props.history.pushState(null, "/scenes"))
+      .then(() => this.props.history.pushState(null, "/edit/scenes"))
       .catch(err => alert("Save error: " + err));
   }
 
@@ -272,7 +272,7 @@ export class EditScene extends React.Component {
                 <fieldset>
                   <legend>
                     Edit scene&nbsp;&nbsp;
-                    <a className="btn btn-warning" href="#/scenes">Back to List</a>
+                    <a className="btn btn-warning" href="#/edit/scenes">Back to List</a>
                   </legend>
 
                   <Input type="text" label="ID" labelClassName="col-xs-2" wrapperClassName="col-xs-10" disabled value={this.state.id} />

@@ -52,7 +52,7 @@ export default class AddScene extends React.Component {
             <Modal.Title>Add scene</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <SceneSelect value={value ? value.value : null} onChange={e => this.onChange(e)} ref={e => this.selectElm = e} />
+            <SceneSelect value={value ? value.value : null} onChange={e => this.onChange(e)} />
 
           </Modal.Body>
           <Modal.Footer>

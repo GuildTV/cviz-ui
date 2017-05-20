@@ -1,33 +1,35 @@
 
-let playlists = [
-  {
-    id: 1,
-    nextPos: 0, // next item in the playlist
+function findChannel(state, id){
+  for(let ch of state){
+    if (ch.id == id)
+      return ch;
   }
-];
+
+  return null;
+}
 
 function returnPlaylist(pl, playlist){
   const length = playlist.PlaylistEntries.length;
-  const nextPos = pl.nextPos >= length ? 0 : pl.nextPos;
+  const nextPos = pl.playlistNextPos >= length ? 0 : pl.playlistNextPos;
 
   const nextScene = playlist.PlaylistEntries[nextPos] || null;
 
   return {
-    id: pl.id,
+    id: pl.playlistId,
     nextScene: nextScene !== null ? nextScene.Scene : null,
     nextPos: nextPos,
     length: length,
   };
 }
 
-function loadPlaylist(Models, id){
+function loadPlaylist(Models, channelState, id){
   const { Scene, Playlist, PlaylistEntry } = Models;
 
-  const pl = playlists[id];
+  const pl = findChannel(channelState, id);
   if (pl === undefined || pl === null)
     return Promise.reject(404);
 
-  return Playlist.findById(pl.id, {
+  return Playlist.findById(pl.playlistId, {
     include: [ {
       model: PlaylistEntry,
       include: Scene
@@ -40,31 +42,31 @@ function loadPlaylist(Models, id){
   });
 }
 
-export default function(Models, app){
+export default function(Models, channelState, app){
   let { Scene, Playlist, PlaylistEntry, sequelize } = Models;
 
   // run api
   app.get('/api/channel/:id', (req, res) => {
-    loadPlaylist(Models, req.params.id).then(({playlist, pl}) => {
+    loadPlaylist(Models, channelState, req.params.id).then(({playlist, pl}) => {
       res.send(returnPlaylist(pl, playlist));
 
     }).catch(() => res.status(500).send(""));
   });
   app.post('/api/channel/:id/next', function(req, res){
-    loadPlaylist(Models, req.params.id).then(({playlist, pl}) => {
-      pl.nextPos++;
-      if (pl.nextPos >= playlist.PlaylistEntries.length)
-        pl.nextPos = 0;
+    loadPlaylist(Models, channelState, req.params.id).then(({playlist, pl}) => {
+      pl.playlistNextPos++;
+      if (pl.playlistNextPos >= playlist.PlaylistEntries.length)
+        pl.playlistNextPos = 0;
 
       res.send(returnPlaylist(pl, playlist));
 
     }).catch(() => res.status(500).send(""));
   });
   app.post('/api/channel/:id/previous', function(req, res){
-    loadPlaylist(Models, req.params.id).then(({playlist, pl}) => {
-      pl.nextPos--;
-      if (pl.nextPos < 0)
-        pl.nextPos = playlist.PlaylistEntries.length-1;
+    loadPlaylist(Models, channelState, req.params.id).then(({playlist, pl}) => {
+      pl.playlistNextPos--;
+      if (pl.playlistNextPos < 0)
+        pl.playlistNextPos = playlist.PlaylistEntries.length-1;
 
       res.send(returnPlaylist(pl, playlist));
 

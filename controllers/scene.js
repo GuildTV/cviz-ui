@@ -1,6 +1,6 @@
 import mapSeries from 'promise-map-series';
 
-export default function(Models, app){
+export default function(Models, channelState, app){
   let { Scene, SceneData, sequelize } = Models;
 
   app.get('/api/scenes', (req, res) => {

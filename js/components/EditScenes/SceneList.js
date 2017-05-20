@@ -95,8 +95,8 @@ export class EditSceneList extends React.Component {
           <td>{ (scene.SceneData || []).length }</td>
           <td>{ scene.order }</td>
           <td>
-            <a className="btn btn-primary" href={`#/scenes/edit/${scene.id}`}>Edit</a>&nbsp;
-            <a className="btn btn-warning" href={`#/scenes/clone/${scene.id}`}>Clone</a>
+            <a className="btn btn-primary" href={`#/edit/scenes/edit/${scene.id}`}>Edit</a>&nbsp;
+            <a className="btn btn-warning" href={`#/edit/scenes/clone/${scene.id}`}>Clone</a>
           </td>
         </tr>
       );
@@ -109,7 +109,7 @@ export class EditSceneList extends React.Component {
             <Col xs={12}>
               <h2>
                 Scenes&nbsp;&nbsp;
-                <a className="btn btn-primary" href="#/scenes/create">Create</a>&nbsp;
+                <a className="btn btn-primary" href="#/edit/scenes/create">Create</a>&nbsp;
                 <Button bsStyle="success" onClick={() => this.updateData()}>Refresh</Button>&nbsp;
                 <Button bsStyle="danger" onClick={() => this.deleteSelected()} disabled={this.state.selectedScenes.length==0}>Delete</Button>
               </h2>
