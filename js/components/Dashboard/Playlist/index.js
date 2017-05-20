@@ -176,29 +176,48 @@ export default class Playlist extends React.Component {
     if(!this.state.data)
       return <h1>Loading...</h1>;
 
+    const { instanceName, timelineFile } = this.state.state;
+
+    return (
+      <div className="topText">
+        <h1>{ instanceName ? instanceName : "Slot empty" }</h1>
+        <h2>{ timelineFile ? "("+timelineFile+")" : "" }</h2>
+      </div>
+    );
+  }
+
+  renderFooterHelper(){
+    if(!this.state.data)
+      return <p></p>;
+
     const { nextScene, nextPos, length } = this.state.data;
-    const { instanceName, timelineFile, state, stateMessage } = this.state.state;
+    const { state, stateMessage } = this.state.state;
 
     const posStr = nextPos == length ? "" : "(" + (nextPos+1) + "/" + length + ")";
 
-    return <div>
-      <h1>{ instanceName ? instanceName : "Slot empty" }</h1>
-      <h2>{ timelineFile ? "("+timelineFile+")" : "" }</h2>
-      <h3>State: { state }{ stateMessage ? " - " + stateMessage : "" }</h3>
+    return (
+      <div className="stickyBottom">
+        <h3>State: { state }{ stateMessage ? " - " + stateMessage : "" }</h3>
 
-      <h4>Next: { posStr } { nextScene ? nextScene.name + "(" + nextScene.template + ")" : " - " }</h4>
-    </div>;
+        <h4>Next: { posStr } { nextScene ? nextScene.name + "(" + nextScene.template + ")" : " - " }</h4>
+      </div>
+    );
   }
 
   render() {
     return (
-      <div id="playlistPage" ref={e => this.elm = e}>
-        <Socket.Event name={ ChangeTemplateStateKey } callback={e => this.ChangeTemplateState(e)} ref={e => this.sock = e} />
-        <div>
-          <Col xs={12}>
-            { this.renderHelper() }
-          </Col>
-        </div>
+      <div>
+        <Col xs={12}>
+          <div id="playlistPage" ref={e => this.elm = e}>
+            <Socket.Event name={ ChangeTemplateStateKey } callback={e => this.ChangeTemplateState(e)} ref={e => this.sock = e} />
+            <div>
+              <Col xs={12}>
+                { this.renderHelper() }
+              </Col>
+            </div>
+          </div>
+        </Col>
+        { this.renderFooterHelper() }
       </div>
     );
   }

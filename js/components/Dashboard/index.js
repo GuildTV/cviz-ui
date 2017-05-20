@@ -53,38 +53,24 @@ export default class Dashboard extends React.Component {
     return settings ? settings.mode != "playlist" : false;
   }
 
-  renderContent() {
-    const { settings } = this.state;
-    if (!settings)
-      return <div>Loading...</div>;
-
-    if (settings.mode == "playlist")
-      return (
-        <Col xs={12}>
-          <Playlist id={this.props.params.id} />;
-        </Col>
-      );
-
-    return (
-      <Grid>
-        <Row>
-          <Col xs={12}>
-            <SceneList id={this.props.params.id} />;
-          </Col>
-        </Row>
-      </Grid>
-    );
-  }
-
   render() {
     const { settings } = this.state;
     if (!settings)
       return <div>Loading...</div>;
 
+    if (settings.mode == "playlist")
+      return <Playlist id={this.props.params.id} />;
+
     return (
       <div>
         <div style={bodyStyle}>
-          { this.renderContent() }
+          <Grid>
+            <Row>
+              <Col xs={12}>
+                <SceneList id={this.props.params.id} />
+              </Col>
+            </Row>
+          </Grid>
         </div>
         { this.showFooter() ? <Footer /> : "" }
       </div>
