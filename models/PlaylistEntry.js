@@ -1,33 +1,30 @@
 export default function(sequelize, DataTypes) {
-  return sequelize.define('Scene', {
+  return sequelize.define('PlaylistEntry', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true
     },
-    
-    name: {
-      type: DataTypes.STRING,
+
+    PlaylistId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    template: {
-      type: DataTypes.STRING,
+
+    SceneId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
 
     order: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    colour: {
-      type: DataTypes.STRING(7),
-      allowNull: true,
     }
   }, {
     classMethods:{
       associate: function(models){
-        models.Scene.hasMany(models.SceneData);
-        models.Scene.hasMany(models.PlaylistEntry);
+        models.PlaylistEntry.belongsTo(models.Playlist);
+        models.PlaylistEntry.belongsTo(models.Scene);
       }
     }
   });

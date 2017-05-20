@@ -16,10 +16,11 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
-          presets: ['es2015', 'react', 'stage-0']
+          presets: ['es2015', 'react', 'stage-0'],
+          plugins: ["transform-decorators-legacy"]
         }
       },
-      { test: /\.less$/, loader: "style!css!less" },
+      { test: /\.less$|\.css$/, loader: "style!css!less" },
       { test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$|\.woff2$|\.ttf$|\.eot$|\.otf$|\.wav$|\.mp3$/, loader: "file" }
     ]
   },

@@ -7,7 +7,7 @@ import { webui_port } from "./config";
 
 import sceneSetup from './controllers/scene';
 import templateController from './controllers/template';
-// import { setup as queueSetup, bind as queueBind } from './controllers/queued';
+import playlistSetup from './controllers/playlist';
 
 import Models from "./models";
 
@@ -32,8 +32,8 @@ app.use(bodyParser.json());
 app.use(express.static('static'));
 app.engine( 'html', nunjucks.render );
 
-// queueSetup(Models, app, io);
 sceneSetup(Models, app);
+playlistSetup(Models, app);
 
 // Set socket.io listeners.
 io.sockets.on('connection', (socket) => {
@@ -44,7 +44,6 @@ io.sockets.on('connection', (socket) => {
   });
 
   templateController(Models, socket);
-  // queueBind(Models, socket);
 });
 
 const scriptSrc = (process.env.NODE_ENV == "production") ? "app.js" : "http://localhost:8087/static/app.js";

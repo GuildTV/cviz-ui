@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { Router } from 'react-router';
 
 import '../less/app.less';
+import 'react-select/dist/react-select.css';
 
 import TopBar from './components/TopBar';
 

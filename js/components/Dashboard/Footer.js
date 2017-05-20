@@ -45,6 +45,7 @@ export default class Footer extends React.Component {
     this.state = {
       state: {
         state: "CLEAR",
+        stateMessage: null,
         filename: "",
         instanceName: ""
       }
@@ -57,6 +58,7 @@ export default class Footer extends React.Component {
       this.setState({
         state: {
           state: "CLEAR",
+          stateMessage: null,
           filename: "",
           instanceName: ""
         }
