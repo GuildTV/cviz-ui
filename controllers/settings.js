@@ -1,44 +1,44 @@
 import { saveState } from './util';
 
-function findChannel(state, id){
-  for(let ch of state){
-    if (ch.id == id)
-      return ch;
-  }
-
-  return null;
-}
-
-export default function(Models, channelState, app){
+export function settingsApiBind(Models, channelState, app){
 
   // run api
   app.get('/api/settings', (req, res) => {
-    res.send(channelState);
+    res.send(channelState.json());
   });
   app.get('/api/settings/:id', (req, res) => {
-    for(let s of channelState) {
-      if (s.id != req.params.id)
-        continue;
+    const ch = channelState.findChannel(req.params.id)
+    if (!ch)
+      res.status(404).send("");
 
-      return res.send(s);
-    }
-    res.status(404).send("");
+    res.send(ch.state());
   });
   app.post('/api/settings/:id', (req, res) => {
-    const ch = findChannel(channelState, req.params.id);
+    const ch = channelState.findChannel(req.params.id)
     if (!ch)
       return res.status(404).send("");
 
-    if (req.body.mode == "playlist") {
-      if (ch.playlistId != req.body.playlistId)
-        ch.playlistNextPos = 0;
+    const newProps = {};
 
-      ch.playlistId = req.body.playlistId;
+    if (req.body.mode == "playlist") {
+      if (newProps.state().playlistId != req.body.playlistId)
+        newProps.playlistNextPos = 0;
+
+      newProps.playlistId = req.body.playlistId;
     }
 
-    ch.mode = req.body.mode;
-    res.send(ch);
+    ch.setProps(newProps);
     saveState(channelState);
+
+    res.send(ch.state());
+  });
+
+  app.get('/api/settings/:id/next', (req, res) => {
+    const ch = channelState.findChannelAfter(req.params.id, 1)
+    if (!ch)
+      res.status(404).send("");
+
+    res.send(ch.state());
   });
 
 }

@@ -16,9 +16,9 @@ import {
 /*
 * Variables
 */
-const ChangeTemplateStateKey = "templateState";
-const GoTemplateKey = "templateGo";
-const KillTemplateKey = "templateKill";
+const ChangeTemplateStateKey = "cvizState";
+const GoTemplateKey = "cvizGo";
+const KillTemplateKey = "cvizKill";
 
 const footerCss = {
   position: "absolute",

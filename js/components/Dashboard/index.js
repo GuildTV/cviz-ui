@@ -65,7 +65,7 @@ export default class Dashboard extends React.Component {
       return <div>Loading...</div>;
 
     if (settings.mode == "playlist")
-      return <Playlist id={this.props.params.id} />;
+      return <Playlist id={this.props.params.id} history={this.props.history} />;
 
     return (
       <div>

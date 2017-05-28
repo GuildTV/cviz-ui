@@ -17,6 +17,6 @@ export default (
     <Route path="/edit/settings/:id" component={EditChannel} />
     <Route path="/edit/settings" component={EditChannelList} />
     <Route path="/dashboard/:id" component={Dashboard} />
-    <Redirect path="/" to="/dashboard/1" />
+    <Redirect path="/" to="/edit/settings" />
   </Route>
 );

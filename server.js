@@ -3,12 +3,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const nunjucks = require('nunjucks');
 
-import { webui_port } from "./config";
+import { webui_port, cvizHosts } from "./config";
 
 import sceneSetup from './controllers/scene';
-import settingsSetup from './controllers/settings';
-import { setup as templateSetup, bind as templateBind } from './controllers/template';
+import { settingsApiBind } from './controllers/settings';
+import { cvizSocketBind } from './controllers/cviz';
 import playlistSetup from './controllers/playlist';
+import { ChannelStateStore } from './controllers/state';
+import { loadState } from './controllers/util';
 
 import Models from "./models";
 
@@ -28,17 +30,16 @@ nunjucks.configure(app.get('views'), {
     express: app
 });
 
-const channelState = [];
+const channelState = new ChannelStateStore(cvizHosts, loadState(), (d) => io.emit('cvizState', d));
 
 app.use(bodyParser.urlencoded({ extended: false } ));
 app.use(bodyParser.json());
 app.use(express.static('static'));
 app.engine( 'html', nunjucks.render );
 
-templateSetup(Models, channelState);
 sceneSetup(Models, channelState, app);
 playlistSetup(Models, channelState, app);
-settingsSetup(Models, channelState, app);
+settingsApiBind(Models, channelState, app);
 
 // Set socket.io listeners.
 io.sockets.on('connection', (socket) => {
@@ -48,7 +49,7 @@ io.sockets.on('connection', (socket) => {
     console.log('user disconnected');
   });
 
-  templateBind(Models, channelState, socket);
+  cvizSocketBind(Models, channelState, socket);
 });
 
 const scriptSrc = (process.env.NODE_ENV == "production") ? "app.js" : "http://localhost:8087/static/app.js";

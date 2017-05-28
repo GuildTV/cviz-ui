@@ -41,7 +41,7 @@ export default class TopBar extends React.Component {
   }
 
   render() {
-    const items = this.state.settings.map(s => <MenuItem key={s.id} eventKey={1.2} href={"#/dashboard/"+s.id}>{s.id}</MenuItem>)
+    const items = this.state.settings.map(s => <MenuItem key={s.id} eventKey={1.2} href={"#/dashboard/"+s.id}>{ s.id ? s.id.toUpperCase() : "?" }</MenuItem>)
     return (
       <Navbar inverse>
         <Socket.Socket />

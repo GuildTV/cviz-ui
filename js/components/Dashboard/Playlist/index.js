@@ -13,10 +13,10 @@ import keydown from 'react-keydown';
 /*
 * Variables
 */
-const ChangeTemplateStateKey = "templateState";
-const GoTemplateKey = "templateGo";
-const KillTemplateKey = "templateKill";
-const RunTemplateKey = "runTemplate";
+const ChangeTemplateStateKey = "cvizState";
+const GoTemplateKey = "cvizGo";
+const KillTemplateKey = "cvizKill";
+const RunTemplateKey = "cvizRun";
 
 /*
 * React
@@ -47,6 +47,8 @@ export default class Playlist extends React.Component {
       return;
 
     this.updateData(nextProps);
+
+    setTimeout(() => this.sock.socket.emit(ChangeTemplateStateKey), 50);
   }
 
   componentWillUnmount() {
@@ -134,6 +136,23 @@ export default class Playlist extends React.Component {
     });
   }
 
+  @keydown( 107, 109 ) // numpad+, numpad-
+  cycle( event ) {
+    if (event)
+      event.preventDefault();
+
+    axios.get('/api/settings/' + this.props.id + '/next')
+    .then(res => {
+      console.log("Next channel: " + res.data.id);
+
+      this.props.history.push("/dashboard/"+res.data.id)
+
+    })
+    .catch(err => {
+      alert("Next channel error:", err);
+    });
+  }
+
   // firedApiGo(){
   //   console.log("Api go");
 
@@ -171,6 +190,7 @@ export default class Playlist extends React.Component {
   // }
 
   ChangeTemplateState(data){
+    console.log("GOT", data, this.props.id)
     if (data.id != this.props.id)
       return;
     
@@ -226,6 +246,7 @@ export default class Playlist extends React.Component {
     return (
       <div>
         <Col xs={12}>
+          <div id="bgName">{ this.props.id }</div>
           <div id="playlistPage" ref={e => this.elm = e}>
             <Socket.Event name={ ChangeTemplateStateKey } callback={e => this.ChangeTemplateState(e)} ref={e => this.sock = e} />
             <div>

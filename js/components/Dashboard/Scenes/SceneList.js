@@ -15,7 +15,7 @@ import SceneEntry from './SceneEntry';
 /*
 * Variables
 */
-const RunTemplateKey = "runTemplate";
+const RunTemplateKey = "cvizRun";
 
 /*
 * React
