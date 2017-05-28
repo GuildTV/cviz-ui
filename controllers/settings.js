@@ -1,3 +1,4 @@
+import { saveState } from './util';
 
 function findChannel(state, id){
   for(let ch of state){
@@ -37,6 +38,7 @@ export default function(Models, channelState, app){
 
     ch.mode = req.body.mode;
     res.send(ch);
+    saveState(channelState);
   });
 
 }

@@ -3,3 +3,5 @@ npm-debug.log
 static
 
 sequelize.json
+state.json
+config.js

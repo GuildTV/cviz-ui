@@ -61,7 +61,7 @@ export default class SceneList extends React.Component {
     const scenes = this.state.scenes
       .filter((p) => SceneList.filterList(this.state.filter, p));
     scenes.sort(SceneEntry.sortScenes);
-    const sceneList = scenes.map((p) => <SceneEntry key={p.id} sock={this.sock} parent={this} runTemplate={d => this.runTemplate(d)} data={p} />);
+    const sceneList = scenes.map((p) => <SceneEntry key={p.id} sock={this.sock} parent={this} runTemplate={d => this.runTemplate(d)} data={p} channelId={this.props.id} />);
 
     return (
       <div>

@@ -1,70 +1,118 @@
 import net from 'net';
+import fs from 'fs';
 
-import { cvizHost, cvizPort } from "../config";
+import { cvizHosts } from "../config";
+import { saveState } from './util';
 
 import JSONStream from 'JSONStream';
 
-let lastState = {};
 let pingInterval = null;
 
-const client = new net.Socket();
-client.setNoDelay(true);
-client.setTimeout(500);
+const clients = {};
 
-client.on('error', () => {
-  console.log("lost connection to cviz");
-
-  client.destroy();
-  client.unref();
-  client.connect(cvizPort, cvizHost, () => {
-    console.log("reconnected");
-  });
-});
-
-client.connect(cvizPort, cvizHost, function() {
-  console.log('Connected to cviz');
-
-  pingInterval = setInterval(() => {
-    client.write("{}");
-  }, 300);
-});
-
-client.pipe(JSONStream.parse()).on('data', (data) => {
+export function setup(Models, channelState){
+  let oldState = {};
   try {
-    if(data == "{}")
-      return;
+    oldState = JSON.parse(fs.readFileSync("state.json"));
 
-    lastState = data;
-    // console.log("Received", lastState);
   } catch (e){
-    console.log("CViz read error:", e);
+    console.log(e);
   }
-});
-
-client.on('close', () => {
-  console.log("Server has gone away!");
-  if(pingInterval != null){
-    clearInterval(pingInterval);
-    pingInterval = null;
-  }
-});
-
-export default function(Models, channelState, socket){
-  socket.emit('templateState', lastState);
-  let lastSentState = "";
   
-  client.pipe(JSONStream.parse()).on('data', (data) => {
-    try {
-      const stringData = JSON.stringify(data);
-      if (lastSentState == stringData || stringData == "{}")
-        return;
-      lastSentState = stringData;
+  for(let conf of cvizHosts){
+    clients[conf.id] = createClient(conf);
+    const newS = {
+      id: conf.id,
+      mode: 'scene', // or playlist
+      playlistId: 0,
+      playlistNextPos: 0, // next item in the playlist
+    };
+    channelState.push(newS);
 
-      socket.emit('templateState', data);
-    } catch (e){
-      console.log("CViz read error:", e);
+    const oldS = oldState[conf.id];
+    if (oldS){
+      Object.assign(newS, oldS);
     }
-  });
+  }
+
+  function writeLog(conf, msg){
+    console.log("cviz " + conf.id + ": " + msg);
+  }
+
+  function createClient(conf) {
+    const client = {
+      pingInterval: null,
+      lastState: {},
+    };
+
+    const sock = client.socket = new net.Socket();
+    sock.setNoDelay(true);
+    sock.setTimeout(500);
+
+    sock.on('error', () => {
+      writeLog(conf, "lost connection");
+
+      sock.destroy();
+      sock.unref();
+      sock.connect(conf.port, conf.host, () => {
+        writeLog(conf, "reconnected");
+      });
+    });
+
+    sock.connect(conf.port, conf.host, function() {
+      writeLog(conf, 'Connected');
+
+      client.pingInterval = setInterval(() => {
+        sock.write("{}");
+      }, 300);
+    });
+
+    sock.pipe(JSONStream.parse()).on('data', (data) => {
+      try {
+        if(data == "{}")
+          return;
+
+        client.lastState = data;
+        // writeLog(conf, "Received", data);
+      } catch (e){
+        writeLog(conf, "read error:", e);
+      }
+    });
+
+    sock.on('close', () => {
+      writeLog(conf, "Server has gone away!");
+      if(client.pingInterval != null){
+        clearInterval(client.pingInterval);
+        client.pingInterval = null;
+      }
+    });
+
+    return client;
+  }
+}
+
+export function bind(Models, channelState, socket){
+  const lastSentState = {};
+
+  for(let k of Object.keys(clients)){
+    const lS = clients[k].lastState;
+
+    socket.emit('templateState', Object.assign({ id: k }, lS))
+    
+    clients[k].socket.pipe(JSONStream.parse()).on('data', (data) => {
+      try {
+        const stringData = JSON.stringify(data);
+        if (lastSentState[k] == stringData || stringData == "{}")
+          return;
+        lastSentState[k] = stringData;
+        data.id = k;
+
+        socket.emit('templateState', data);
+      } catch (e){
+        console.log("CViz read error:", e);
+      }
+    });
+  }
 
   socket.on('runTemplate', runTemplate);
 
@@ -85,7 +133,11 @@ export function runTemplate (data){
     parameters[d.name] = d.value;
   }
 
-  client.write(JSON.stringify({
+  const client = clients[data.id];
+  if (!client)
+    return console.log("run bad id:", data.id)
+
+  client.socket.write(JSON.stringify({
     type: "LOAD",
     timelineFile: data.template,
     instanceName: data.dataId,
@@ -96,7 +148,11 @@ export function runTemplate (data){
 export function goTemplate (){
   console.log("templateGo");
 
-  client.write(JSON.stringify({
+  const client = clients[data.id];
+  if (!client)
+    return console.log("run bad id:", data.id)
+
+  client.socket.write(JSON.stringify({
     type: "CUE"
   }));
 }
@@ -104,7 +160,11 @@ export function goTemplate (){
 export function killTemplate(){
   console.log("templateKill");
 
-  client.write(JSON.stringify({
+  const client = clients[data.id];
+  if (!client)
+    return console.log("run bad id:", data.id)
+
+  client.socket.write(JSON.stringify({
     type: "KILL"
   }));
 }

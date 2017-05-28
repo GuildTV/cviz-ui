@@ -7,7 +7,7 @@ import { webui_port } from "./config";
 
 import sceneSetup from './controllers/scene';
 import settingsSetup from './controllers/settings';
-import templateController from './controllers/template';
+import { setup as templateSetup, bind as templateBind } from './controllers/template';
 import playlistSetup from './controllers/playlist';
 
 import Models from "./models";
@@ -28,20 +28,14 @@ nunjucks.configure(app.get('views'), {
     express: app
 });
 
-const channelState = [
-  {
-    id: 1,
-    mode: 'playlist', // or playlist
-    playlistId: 1,
-    playlistNextPos: 0, // next item in the playlist
-  }
-];
+const channelState = [];
 
 app.use(bodyParser.urlencoded({ extended: false } ));
 app.use(bodyParser.json());
 app.use(express.static('static'));
 app.engine( 'html', nunjucks.render );
 
+templateSetup(Models, channelState);
 sceneSetup(Models, channelState, app);
 playlistSetup(Models, channelState, app);
 settingsSetup(Models, channelState, app);
@@ -54,7 +48,7 @@ io.sockets.on('connection', (socket) => {
     console.log('user disconnected');
   });
 
-  templateController(Models, channelState, socket);
+  templateBind(Models, channelState, socket);
 });
 
 const scriptSrc = (process.env.NODE_ENV == "production") ? "app.js" : "http://localhost:8087/static/app.js";

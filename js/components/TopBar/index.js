@@ -3,6 +3,8 @@
 */
 import React from 'react';
 import Socket from 'react-socket';
+import axios from 'axios';
+
 
 import { 
   MenuItem,
@@ -15,9 +17,31 @@ import {
 * React
 */
 export default class TopBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      settings: [],
+    };
+  }
+
+  componentDidMount() {
+    this.updateData();
+  }
+
+  updateData(){
+    axios.get('/api/settings')
+    .then(res => {
+      this.setState({ settings: res.data || [] });
+      console.log("Loaded nav settings");
+    })
+    .catch(err => {
+      this.setState({ settings: [] });
+      alert("Get settings error:", err);
+    });
+  }
 
   render() {
-    // <MenuItem eventKey={1.2} href="#/playlist">Playlist</MenuItem>
+    const items = this.state.settings.map(s => <MenuItem key={s.id} eventKey={1.2} href={"#/dashboard/"+s.id}>{s.id}</MenuItem>)
     return (
       <Navbar inverse>
         <Socket.Socket />
@@ -28,6 +52,9 @@ export default class TopBar extends React.Component {
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
+          <Nav>
+            {items}
+          </Nav>
           <Nav pullRight>
             <NavDropdown eventKey={1} title="Pages" id="basic-nav-dropdown">
               <MenuItem eventKey={1.1} href="#">Dashboard</MenuItem>

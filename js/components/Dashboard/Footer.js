@@ -53,7 +53,9 @@ export default class Footer extends React.Component {
   }
 
   ChangeTemplateState(data){
-    console.log(data);
+    if (data.id != this.props.id)
+      return;
+    
     if (data.state == "CLEAR"){
       this.setState({
         state: {
@@ -71,13 +73,17 @@ export default class Footer extends React.Component {
   KillButtonClick(){
     console.log("Sending KILL");
 
-    this.sock.socket.emit(KillTemplateKey);
+    this.sock.socket.emit(KillTemplateKey, {
+      id: this.props.id
+    });
   }
 
   GoButtonClick(){
     console.log("Sending GO");
 
-    this.sock.socket.emit(GoTemplateKey);
+    this.sock.socket.emit(GoTemplateKey, {
+      id: this.props.id
+    });
   }
 
   render() {

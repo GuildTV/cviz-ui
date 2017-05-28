@@ -23,7 +23,7 @@ function returnPlaylist(pl, playlist){
 }
 
 function loadPlaylist(Models, channelState, id){
-  const { Scene, Playlist, PlaylistEntry } = Models;
+  const { Scene, SceneData, Playlist, PlaylistEntry } = Models;
 
   const pl = findChannel(channelState, id);
   if (pl === undefined || pl === null)
@@ -32,7 +32,10 @@ function loadPlaylist(Models, channelState, id){
   return Playlist.findById(pl.playlistId, {
     include: [ {
       model: PlaylistEntry,
-      include: Scene
+      include: [ {
+        model: Scene,
+        include: SceneData
+      } ]
     } ]
   }).then(playlist => {
     if (!playlist)

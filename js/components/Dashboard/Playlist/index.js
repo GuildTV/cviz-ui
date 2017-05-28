@@ -42,12 +42,22 @@ export default class Playlist extends React.Component {
     this.interval = window.setInterval(() => this.updateData(), 5000);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.id == this.props.id)
+      return;
+
+    this.updateData(nextProps);
+  }
+
   componentWillUnmount() {
     window.clearInterval(this.interval);
   }
 
-  updateData(){
-    axios.get('/api/channel/' + this.props.id)
+  updateData(props){
+    if (!props)
+      props = this.props;
+
+    axios.get('/api/channel/' + props.id)
     .then(res => {
       this.setState({ data: res.data || null });
       console.log("Loaded playlist data");
@@ -69,6 +79,7 @@ export default class Playlist extends React.Component {
 
       const data = this.state.data.nextScene; 
       this.sock.socket.emit(RunTemplateKey, {
+        id: this.props.id,
         template: data.template,
         data: data,
         dataId: data.name
@@ -78,7 +89,9 @@ export default class Playlist extends React.Component {
     }
     console.log("Sending GO");
 
-    this.sock.socket.emit(GoTemplateKey);
+    this.sock.socket.emit(GoTemplateKey, {
+      id: this.props.id,
+    });
   }
 
   @keydown( 'space', 111, 106, 9, 8 ) // numpad/, numpad*, numpadtab, numpadback
@@ -86,7 +99,9 @@ export default class Playlist extends React.Component {
     event.preventDefault();
     console.log("Sending KILL");
 
-    this.sock.socket.emit(KillTemplateKey);
+    this.sock.socket.emit(KillTemplateKey, {
+      id: this.props.id,
+    });
   }
 
   @keydown( 188, 97, 100, 103 ) // <, nump/ad1, numpad4, numpad7
@@ -156,6 +171,9 @@ export default class Playlist extends React.Component {
   // }
 
   ChangeTemplateState(data){
+    if (data.id != this.props.id)
+      return;
+    
     this.updateData();
 
     if (data.state == "CLEAR"){

@@ -1,0 +1,14 @@
+export const webui_port = 8088;
+
+export const cvizHosts = [
+  {
+    "id": "gfx",
+    "host": "192.168.0.11",
+    "port": "3456",
+  },
+  // {
+  //   "id": "vt",
+  //   "host": "192.168.0.10",
+  //   "port": "3456",
+  // }
+];

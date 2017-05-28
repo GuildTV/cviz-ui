@@ -5,7 +5,7 @@
   "description": "A simple web interface for cviz",
   "scripts": {
     "start": "NODE_ENV=production ./node_modules/.bin/babel-node ./server.js",
-    "dev": "NODE_ENV=development nodemon --ignore dumps/ --exec babel-node ./server.js",
+    "dev": "NODE_ENV=development nodemon --ignore dumps/ --ignore state.json --exec babel-node ./server.js",
     "lint": "NODE_ENV=test eslint --ext .js .",
     "migrate": "NODE_ENV=development sequelize --config=sequelize.json db:migrate"
   },

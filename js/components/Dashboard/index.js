@@ -31,19 +31,25 @@ export default class Dashboard extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.updateData();
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id == this.props.params.id)
+      return;
+
+    this.updateData(nextProps);
   }
 
-  updateData(){
-    const id = 1;
-    axios.get('/api/settings/' + id)
+  componentDidMount() {
+    this.updateData(this.props);
+  }
+
+  updateData(props){
+    axios.get('/api/settings/' + props.params.id)
     .then(res => {
       this.setState({ settings: res.data || [] });
-      console.log("Loaded settings for:", id);
+      console.log("Loaded settings for:", props.params.id);
     })
     .catch(err => {
-      this.setState({ settings: {} });
+      this.setState({ settings: null });
       alert("Get settings error:", err);
     });
   }
@@ -72,7 +78,7 @@ export default class Dashboard extends React.Component {
             </Row>
           </Grid>
         </div>
-        { this.showFooter() ? <Footer /> : "" }
+        { this.showFooter() ? <Footer id={this.props.params.id} /> : "" }
       </div>
     );
   }
