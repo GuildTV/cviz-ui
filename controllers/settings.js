@@ -21,7 +21,7 @@ export function settingsApiBind(Models, channelState, app){
     const newProps = {};
 
     if (req.body.mode == "playlist") {
-      if (newProps.state().playlistId != req.body.playlistId)
+      if (ch.state().playlistId != req.body.playlistId)
         newProps.playlistNextPos = 0;
 
       newProps.playlistId = req.body.playlistId;
