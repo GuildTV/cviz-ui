@@ -18,7 +18,9 @@ export function settingsApiBind(Models, channelState, app){
     if (!ch)
       return res.status(404).send("");
 
-    const newProps = {};
+    const newProps = {
+      mode: req.body.mode,
+    };
 
     if (req.body.mode == "playlist") {
       if (ch.state().playlistId != req.body.playlistId)
