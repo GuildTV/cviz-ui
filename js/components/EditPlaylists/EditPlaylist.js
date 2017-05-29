@@ -41,6 +41,7 @@ export class EditPlaylist extends React.Component {
 
   componentWillUnmount(){
     this.setState(Object.assign({
+      loaded: false,
       _mode: this.state._mode
     }, newPlaylist));
   }
@@ -51,6 +52,7 @@ export class EditPlaylist extends React.Component {
     if (!id) {
       console.log("Update no id");
       return this.setState(Object.assign({
+        loaded: true,
         _mode: this.state._mode
       }, newPlaylist));
     }
