@@ -55,11 +55,10 @@ export class EditTemplateXml extends React.Component {
       return this.state.rawStr;
 
     const rootElm = xmlBuilder.create('templateData', { headless: true });
-    const components = rootElm.ele('componentData');
 
     for (let i = 0; i < this.state.fields.length; i++) {
       const field = this.state.fields[i];
-      const comp = components.ele('componentData', { id: field.name });  
+      const comp = rootElm.ele('componentData', { id: field.name });  
       comp.ele('data', { id: "text", value: field.value});
     }
     
