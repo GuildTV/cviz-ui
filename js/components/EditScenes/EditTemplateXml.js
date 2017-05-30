@@ -14,7 +14,7 @@ export class EditTemplateXml extends React.Component {
   constructor(props) {
     super(props);
 
-    const fields = this.tryParseXml(props.value);
+    const fields = this.tryParseXml(props.value) || [];
 
     this.state = {
       failedParse: fields == null,
