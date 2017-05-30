@@ -4,10 +4,11 @@ export function saveState(channelState){
   const newState = {};
   
   channelState.each(ch => {
-    newState[ch.id] = {
-      id: ch.id,
-      mode: ch.mode,
-      playlistId: ch.playlistId,
+    const st = ch.state();
+    newState[ch.id()] = {
+      id: ch.id(),
+      mode: st.mode,
+      playlistId: st.playlistId,
     };
   })
 
