@@ -5,3 +5,4 @@ static
 sequelize.json
 state.json
 config.js
+*.sqlite

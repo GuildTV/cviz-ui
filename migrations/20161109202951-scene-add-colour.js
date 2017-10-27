@@ -5,7 +5,8 @@ module.exports = {
       'colour',
       {
         type: Sequelize.STRING(7),
-        allowNull: false
+        allowNull: false,
+        defaultValue: ""
       }
     );
   },

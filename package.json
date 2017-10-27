@@ -4,10 +4,11 @@
   "version": "0.3.0",
   "description": "A simple web interface for cviz",
   "scripts": {
-    "start": "NODE_ENV=production ./node_modules/.bin/babel-node ./server.js",
-    "dev": "NODE_ENV=development nodemon --ignore dumps/ --ignore js/ --ignore state.json --exec babel-node ./server.js",
-    "lint": "NODE_ENV=test eslint --ext .js .",
-    "migrate": "NODE_ENV=development sequelize --config=sequelize.json db:migrate"
+    "start": "cross-env NODE_ENV=production ./node_modules/.bin/babel-node ./server.js",
+    "dev": "cross-env NODE_ENV=development nodemon --ignore dumps/ --ignore js/ --ignore state.json --exec babel-node ./server.js",
+    "lint": "cross-env NODE_ENV=test eslint --ext .js .",
+    "migrate": "cross-env NODE_ENV=development sequelize --config=sequelize.json db:migrate",
+    "gulp": "gulp"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
     "body-parser": "^1.13.3",
     "bootstrap": "^3.3.6",
     "classnames": "^2.1.3",
+    "cross-env": "^5.1.1",
     "express": "^4.13.1",
     "gulp": "^3.9.1",
     "gulp-util": "^3.0.7",
@@ -46,6 +48,7 @@
     "sequelize-cli": "^2.4.0",
     "socket.io": "^1.4.5",
     "socket.io-client": "^1.4.5",
+    "sqlite": "^2.8.0",
     "webpack": "^1.12.1",
     "webpack-dev-server": "^1.12.1",
     "xmlbuilder": "^8.2.2"

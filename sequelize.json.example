@@ -18,8 +18,9 @@
     "username": "root",
     "password": "localTest",
     "database": "CViz",
-    "host": "db",
-    "dialect": "mysql",
+    "host": "127.0.0.1",
+    "dialect": "sqlite",
+    "storage": "data.sqlite",
     "logging": false
   }
 }

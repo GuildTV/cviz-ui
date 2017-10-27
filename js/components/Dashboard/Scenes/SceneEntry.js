@@ -18,6 +18,7 @@ export default class SceneEntry extends React.Component {
     console.log("Running template:", Object.assign({id: channelId}, data.template));
 
     this.props.runTemplate({
+      id: this.props.channelId,
       template: data.template,
       data: data,
       dataId: data.name
