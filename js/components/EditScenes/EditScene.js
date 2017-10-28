@@ -10,6 +10,7 @@ import {
   Input, Button
 } from 'react-bootstrap';
 import { EditTemplateXml } from './EditTemplateXml';
+import { EditTemplateJson } from './EditTemplateJson';
 
 /*
 * Variables
@@ -104,19 +105,19 @@ export class EditScene extends React.Component {
     this.setState({ order: parseInt(e.target.value) });
   }
 
-  validateScene(dataset){
-    const { name, value } = dataset;
+  // validateScene(dataset){
+  //   const { name, value } = dataset;
 
-    if (!name || !value || name.length < 2 || value.length < 5)
-      return "Missing data for dataset '" + name + "'";
+  //   if (!name || !value || name.length < 2 || value.length < 5)
+  //     return "Missing data for dataset '" + name + "'";
 
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(value, "text/xml");
-    if (!xmlDoc || this.hasAnyParserErrors(xmlDoc.documentElement))
-      return "Failed to parse dataset xml for '" + name + "'";
+  //   const parser = new DOMParser();
+  //   const xmlDoc = parser.parseFromString(value, "text/xml");
+  //   if (!xmlDoc || this.hasAnyParserErrors(xmlDoc.documentElement))
+  //     return "Failed to parse dataset xml for '" + name + "'";
 
-    return true;
-  }
+  //   return true;
+  // }
 
   hasAnyParserErrors(elm){
     if (!elm)
@@ -238,6 +239,8 @@ export class EditScene extends React.Component {
     switch(d.type){
       case "xml":
         return <EditTemplateXml value={d.value} onChange={x => this.handleXmlValueChange(d, x)} />;
+      case "json":
+        return <EditTemplateJson value={d.value} onChange={x => this.handleXmlValueChange(d, x)} />;
       default:
         return <Input type={d.type == "text" ? "text" : "textarea"} label="Value" labelClassName="col-xs-2" wrapperClassName="col-xs-10" rows={5} 
           onChange={e => this.handleDatasetValueChange(e)} data-id={d.id} data-id2={d.id2} value={d.value} />;
@@ -293,7 +296,8 @@ export class EditScene extends React.Component {
                   <Input label=" " labelClassName="col-xs-2" wrapperClassName="col-xs-10">
                     <Button type="submit" bsStyle="primary">Save</Button>&nbsp;
                     <Button bsStyle="info" onClick={() => this.AddData("text")}>Add text</Button>&nbsp;
-                    <Button bsStyle="info" onClick={() => this.AddData("xml")}>Add dataset</Button>&nbsp;
+                    <Button bsStyle="info" onClick={() => this.AddData("xml")}>Add xml dataset</Button>&nbsp;
+                    <Button bsStyle="info" onClick={() => this.AddData("json")}>Add json dataset</Button>&nbsp;
                     { this.state.id ? <Button bsStyle="danger" onClick={() => this.DoDelete()}>Delete</Button> : "" }
                   </Input>
                 </fieldset>

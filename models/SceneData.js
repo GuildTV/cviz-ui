@@ -17,7 +17,7 @@ export default function(sequelize, DataTypes) {
     },
 
     type: {
-      type: DataTypes.ENUM("text", "xml"),
+      type: DataTypes.ENUM("text", "xml", "json"),
       allowNull: false,
     },
 
